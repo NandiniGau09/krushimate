@@ -1,0 +1,546 @@
+{% extends "base.html" %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+<style>
+  :root {
+    --primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    --success: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    --warning: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.2);
+    --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  }
+
+  .consultant-hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #1e40af 100%);
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(37, 99, 235, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(22, 163, 74, 0.3) 0%, transparent 50%);
+    animation: pulse 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.05); }
+  }
+
+  .hero-content {
+    max-width: 800px;
+    position: relative;
+    z-index: 2;
+    animation: slideUp 1s ease-out;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-icon {
+    font-size: 80px;
+    margin-bottom: 24px;
+    display: block;
+    filter: drop-shadow(0 10px 30px rgba(255,255,255,0.2));
+  }
+
+  .hero-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(36px, 6vw, 52px);
+    font-weight: 800;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, white, rgba(255,255,255,0.8));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-subtitle {
+    font-size: 20px;
+    opacity: 0.9;
+    margin: 0;
+    font-weight: 400;
+  }
+
+  .consultants-grid {
+    padding: 80px 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(28px, 4vw, 40px);
+    font-weight: 700;
+    text-align: center;
+    color: #1e293b;
+    margin-bottom: 60px;
+    position: relative;
+  }
+
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--primary);
+    border-radius: 2px;
+  }
+
+  .consultants-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 32px;
+  }
+
+  .consultant-card {
+    backdrop-filter: blur(20px);
+    background: rgba(255,255,255,0.95);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .consultant-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--primary);
+  }
+
+  .consultant-card:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 40px 80px -20px rgba(0,0,0,0.3);
+  }
+
+  .consultant-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    color: white;
+    margin: 0 auto 24px;
+    box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+  }
+
+  .consultant-name {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    text-align: center;
+  }
+
+  .consultant-title {
+    color: #64748b;
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .contact-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .contact-btn {
+    flex: 1;
+    padding: 16px 20px;
+    border: none;
+    border-radius: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    text-decoration: none;
+    justify-content: center;
+  }
+
+  .contact-btn-call {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.3);
+  }
+
+  .contact-btn-whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: white;
+    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
+  }
+
+  .contact-btn-email {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+  }
+
+  .contact-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+  }
+
+  .websites-section {
+    margin-top: 100px;
+  }
+
+  .websites-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+  }
+
+  .website-card {
+    background: white;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    border-top: 5px solid var(--primary);
+  }
+
+  .website-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 30px 60px -15px rgba(0,0,0,0.2);
+  }
+
+  .website-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    margin-bottom: 20px;
+  }
+
+  .website-google {
+    background: linear-gradient(135deg, #4285f4, #34a853);
+  }
+
+  .website-linkedin {
+    background: linear-gradient(135deg, #0077b5, #005582);
+  }
+
+  .website-whatsapp {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+  }
+
+  .website-name {
+    font-weight: 700;
+    font-size: 20px;
+    color: #1e293b;
+    margin: 0 0 12px 0;
+  }
+
+  .website-desc {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .websites-buttons {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .website-link {
+    padding: 12px 24px;
+    background: var(--primary);
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .website-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+  }
+
+  .floating-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .shape {
+    position: absolute;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50%;
+    animation: float 20s infinite linear;
+  }
+
+  .shape1 { width: 100px; height: 100px; top: 10%; left: 10%; animation-delay: 0s; }
+  .shape2 { width: 60px; height: 60px; top: 60%; right: 20%; animation-delay: 5s; }
+  .shape3 { width: 80px; height: 80px; bottom: 20%; left: 20%; animation-delay: 10s; }
+
+  @keyframes float {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(180deg); }
+    100% { transform: translateY(0px) rotate(360deg); }
+  }
+
+  @media (max-width: 768px) {
+    .consultants-container, .websites-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .contact-buttons {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<main class="consultant-hero">
+  <div class="hero-bg"></div>
+  <div class="floating-shapes">
+    <div class="shape shape1"></div>
+    <div class="shape shape2"></div>
+    <div class="shape shape3"></div>
+  </div>
+  
+  <div class="hero-content">
+    <div class="hero-icon">🧑‍🌾</div>
+    <h1 class="hero-title">Expert Crop Consultants</h1>
+    <p class="hero-subtitle">Get professional advice for healthy crops and higher yields. Connect with verified agriculture experts instantly!</p>
+  </div>
+</main>
+
+<section class="consultants-grid">
+  <h2 class="section-title">📞 Direct Contacts</h2>
+  
+  <div class="consultants-container">
+    <!-- Global Agriculture Consultancy -->
+    <div class="consultant-card">
+      <div class="consultant-avatar">
+        <i class="fas fa-globe"></i>
+      </div>
+      <h3 class="consultant-name">Global Agriculture Consultancy</h3>
+      <p class="consultant-title">Professional Agri Business Consultants</p>
+      <div class="contact-buttons">
+        <a href="mailto:info@globalagricultureconsultancy.com?subject=Crop Consultation Request" class="contact-btn contact-btn-email">
+          <i class="fas fa-envelope"></i> Email
+        </a>
+
+        <a href="tel:+919975945549" class="contact-btn contact-btn-call">
+          <i class="fas fa-phone"></i> +91-9975945549
+        </a>
+
+      </div>
+    </div>
+
+    <!-- Agrotech Agribusiness Consultancy -->
+    <div class="consultant-card">
+      <div class="consultant-avatar">
+        <i class="fas fa-seedling"></i>
+      </div>
+      <h3 class="consultant-name">Agrotech Agribusiness Consultancy</h3>
+      <p class="consultant-title">Agriculture Business Solutions</p>
+      <div class="contact-buttons">
+        <a href="mailto:agrotechconsultancy@gmail.com?subject=Agrotech Consultation" class="contact-btn contact-btn-email">
+          <i class="fas fa-envelope"></i> Email
+        </a>
+        <a href="tel:+919950064449" class="contact-btn contact-btn-call">
+          <i class="fas fa-phone"></i> +91-99500-64449
+        </a>
+      </div>
+    </div>
+
+    <!-- Agpro Consulting -->
+    <div class="consultant-card">
+      <div class="consultant-avatar">
+        <i class="fas fa-tractor"></i>
+      </div>
+      <h3 class="consultant-name">Agpro Consulting Pvt Ltd</h3>
+      <p class="consultant-title">Agriculture Professional Services</p>
+      <div class="contact-buttons">
+        <a href="mailto:info@agproconsulting.com?subject=Agpro Consultation" class="contact-btn contact-btn-email">
+          <i class="fas fa-envelope"></i> Email
+        </a>
+        <a href="tel:+919637016303" class="contact-btn contact-btn-call">
+          <i class="fas fa-phone"></i> +91-9637016303
+        </a>
+      </div>
+    </div>
+
+    <!-- Pusa Ag Consultancy -->
+    <div class="consultant-card">
+      <div class="consultant-avatar">
+        <i class="fas fa-university"></i>
+      </div>
+      <h3 class="consultant-name">Pusa Ag Consultancy</h3>
+      <p class="consultant-title">Research-Based Agriculture Advice</p>
+      <div class="contact-buttons">
+        <a href="mailto:agriConsult@pusa.com?subject=Pusa Consultation" class="contact-btn contact-btn-email">
+          <i class="fas fa-envelope"></i> Email
+        </a>
+        <a href="tel:+919876543210" class="contact-btn contact-btn-call">
+          <i class="fas fa-phone"></i> +91-9876543210
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="websites-section">
+  <h2 class="section-title">🌐 Online Platforms</h2>
+  
+  <div class="websites-grid">
+    <!-- Google Farmers Contacts -->
+    <div class="website-card">
+      <div class="website-icon website-google">
+        <i class="fab fa-google"></i>
+      </div>
+      <h3 class="website-name">Google - Local Consultants</h3>
+      <p class="website-desc">Search for verified crop consultants in your area. Connect with experts having 95%+ ratings.</p>
+      <div class="websites-buttons">
+        <a href="https://www.google.com/search?q=crop+consultant+near+me" class="website-link" target="_blank">
+          <i class="fas fa-search"></i> Search Consultants
+        </a>
+        <a href="https://g.co/kgs/nearby-agricultural-consultants" class="website-link" target="_blank">
+          <i class="fas fa-map-marker-alt"></i> Find Nearby
+        </a>
+      </div>
+    </div>
+
+    <!-- LinkedIn Agriculture Experts -->
+    <div class="website-card">
+      <div class="website-icon website-linkedin">
+        <i class="fab fa-linkedin"></i>
+      </div>
+      <h3 class="website-name">LinkedIn Agriculture Network</h3>
+      <p class="website-desc">Connect with 10,000+ agriculture professionals, consultants and researchers across India.</p>
+      <div class="websites-buttons">
+        <a href="https://linkedin.com/search/results/people/?keywords=agriculture%20consultant%20india" class="website-link" target="_blank">
+          <i class="fab fa-linkedin"></i> Find Experts
+        </a>
+        <a href="https://linkedin.com/groups/agriculture-india" class="website-link" target="_blank">
+          <i class="fas fa-users"></i> Join Groups
+        </a>
+      </div>
+    </div>
+
+    <!-- WhatsApp Business Directory -->
+    <div class="website-card">
+      <div class="website-icon website-whatsapp">
+        <i class="fab fa-whatsapp"></i>
+      </div>
+      <h3 class="website-name">WhatsApp Agri Business</h3>
+      <p class="website-desc">Verified WhatsApp numbers of crop consultants and agriculture service providers.</p>
+      <div class="websites-buttons">
+        <a href="https://wa.me/919876543210" class="website-link" target="_blank">
+          <i class="fas fa-phone"></i> Direct Chat
+        </a>
+        <a href="https://directory.justdial.com/india/agriculture-consultant" class="website-link" target="_blank">
+          <i class="fas fa-external-link-alt"></i> Justdial
+        </a>
+      </div>
+    </div>
+
+
+    <!-- Government Official Agriculture Website -->
+    <div class="website-card">
+      <div class="website-icon" style="background: linear-gradient(135deg, #14b8a6, #0d9488);">
+        <i class="fas fa-landmark"></i>
+      </div>
+      <h3 class="website-name">Government Agriculture Ministry</h3>
+      <p class="website-desc">Official Government of India Ministry of Agriculture & Farmers Welfare website</p>
+      <div class="websites-buttons">
+        <a href="https://www.agriwelfare.gov.in/" class="website-link" target="_blank">
+          <i class="fas fa-globe"></i> Official Agriculture Website
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<script>
+  // Smooth animations on load
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.consultant-card').forEach((card, index) => {
+      card.style.opacity = '0';
+      card.style.transform = 'translateY(30px)';
+      setTimeout(() => {
+        card.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        card.style.opacity = '1';
+        card.style.transform = 'translateY(0)';
+      }, index * 150);
+    });
+
+    document.querySelectorAll('.website-card').forEach((card, index) => {
+      setTimeout(() => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        setTimeout(() => {
+          card.style.transition = 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 100);
+      }, 500 + index * 150);
+    });
+  });
+
+  // WhatsApp pre-filled messages
+  document.querySelectorAll('.contact-btn-whatsapp').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const msg = btn.getAttribute('href').match(/text=(.*)/)?.[1] || 'Hi, I need crop consultation';
+      const url = `https://wa.me/${btn.getAttribute('href').match(/wa\.me\/(\d+)/)[1]}?text=${encodeURIComponent(msg)}`;
+      window.open(url, '_blank');
+    });
+  });
+</script>
+
+{% endblock %}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard - Krushimate</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="card">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;">
+        <div class="logo"><i class="fas fa-seedling"></i></div>
+        <div>
+          <h1>Krushimate</h1>
+          <div class="muted">Smart Farming App</div>
+        </div>
+      </div>
+      <nav>
+        <a href="/dashboard" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="/crops"><i class="fas fa-leaf"></i> Crops</a>
+        <a href="/farm-gallery"><i class="fas fa-images"></i> Gallery</a>
+        <a href="/medicine"><i class="fas fa-pills"></i> Medicine</a>
+        <a href="/market"><i class="fas fa-store"></i> Market</a>
+        <a href="/weather"><i class="fas fa-cloud-sun"></i> Weather</a>
+        <a href="/disease"><i class="fas fa-bug"></i> Disease</a>
+        <a href="/ai_advisor"><i class="fas fa-robot"></i> AI Advisor</a>
+        <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+      </nav>
+    </header>
+    
+    <main>
+      <div class="hero">
+        <h1>🌾 Welcome to Your Dashboard</h1>
+        <p class="muted">Manage your farm data and get insights</p>
+      </div>
+      
+      <div class="grid">
+        <div class="card">
+          <h2>📊 Farm Stats</h2>
+          <div style="font-size:3rem;font-weight:700;color:var(--accent-primary);margin:20px 0;">0 Crops</div>
+          <div style="font-size:2rem;font-weight:700;color:var(--accent-primary);margin-bottom:20px;">0 Acres</div>
+          <div>0 Active Orders</div>
+        </div>
+        
+        <div class="card">
+          <h2>🚀 Quick Actions</h2>
+          <a href="/crops" class="btn" style="display:block;margin-bottom:12px;">➕ Add New Crop</a>
+          <a href="/medicine" class="btn" style="display:block;margin-bottom:12px;">🛒 Buy Medicines</a>
+          <a href="/market" class="btn" style="display:block;">📈 Check Prices</a>
+        </div>
+      </div>
+      
+      <div class="activity-list">
+        <h2>📋 Recent Activity</h2>
+        <div class="card">
+          <p style="text-align:center;color:var(--text-muted);padding:40px;">No activity yet. <a href="/crops">Start by adding crops</a></p>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,333 @@
+
+{% extends "base.html" %}
+{% block content %}
+<style>
+  .advisor-hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #1e40af 100%);
+    border-radius: 24px;
+    padding: 50px 40px;
+    text-align: center;
+    color: white;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .advisor-hero h1 {
+    font-size: clamp(32px, 6vw, 48px);
+    margin-bottom: 15px;
+    position: relative;
+  }
+  .advisor-hero p {
+    font-size: 18px;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .ai-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.2);
+    padding: 8px 16px;
+    border-radius: 25px;
+    margin-top: 20px;
+    backdrop-filter: blur(10px);
+  }
+  .daily-advisor {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+    margin-bottom: 40px;
+  }
+  .advisor-card {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    transition: all 0.4s ease;
+  }
+  .advisor-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+  }
+  .card-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
+  }
+  .card-title {
+    color: #1e3a8a;
+    font-size: 22px;
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+  .card-desc {
+    color: #64748b;
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+  .chat-container {
+    background: rgba(255,255,255,0.95);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(20px);
+  }
+  .chat-header {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    padding: 25px;
+    border-radius: 20px 20px 0 0;
+  }
+  .chat-messages {
+    flex: 1;
+    padding: 25px;
+    overflow-y: auto;
+    background: #f8fafc;
+  }
+  .chat-input-container {
+    padding: 25px;
+    border-top: 1px solid #e5e7eb;
+    background: white;
+    border-radius: 0 0 20px 20px;
+  }
+  .chat-input {
+    display: flex;
+    gap: 15px;
+  }
+  .message-input {
+    flex: 1;
+    padding: 15px 20px;
+    border: 2px solid #e5e7eb;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  .message-input:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.1);
+  }
+  .msg-bubble {
+    max-width: 80%;
+    padding: 15px 20px;
+    border-radius: 18px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    animation: msgSlide 0.3s ease;
+  }
+  .msg-user {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+  }
+  .msg-ai {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-bottom-left-radius: 4px;
+  }
+  .advisor-tabs {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 12px 24px;
+    border: 2px solid #e5e7eb;
+    background: white;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+    color: white;
+    border-color: #3b82f6;
+  }
+  .govt-logos {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+  }
+  .govt-logo {
+    text-align: center;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+  }
+  .govt-logo:hover {
+    opacity: 1;
+  }
+  @keyframes msgSlide {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (max-width: 768px) {
+    .daily-advisor { grid-template-columns: 1fr; }
+    .advisor-hero { padding: 40px 20px; }
+    .chat-container { height: 400px; }
+  }
+</style>
+
+<!-- Hero Section -->
+<div class="advisor-hero">
+  <h1>🤖 AI Personal Farm Advisor</h1>
+  <p>Get personalized daily farming advice powered by government AI tools & your farm data. Weather, crop health, market insights & actionable recommendations.</p>
+  <div class="ai-badge">
+    <span style="font-size: 20px;">⚡</span>
+    Powered by Govt AI + Groq Llama 3.1 + Your Farm Data
+  </div>
+</div>
+
+<!-- Advisor Cards -->
+<div class="daily-advisor">
+  <div class="advisor-card">
+    <div class="card-icon" style="color: #10b981;">🌤️</div>
+    <div class="card-title">Today's Weather Advisory</div>
+    <div class="card-desc">
+      Real-time weather forecast with irrigation & spraying recommendations based on your location and crops.
+    </div>
+    <button class="btn" onclick="getWeatherAdvice()">Get Weather Advice</button>
+  </div>
+  
+  <div class="advisor-card">
+    <div class="card-icon" style="color: #3b82f6;">📈</div>
+    <div class="card-title">Market Intelligence</div>
+    <div class="card-desc">
+      Daily price trends for your crops. Know when to sell for maximum profit.
+    </div>
+    <button class="btn" onclick="getMarketAdvice()">Market Update</button>
+  </div>
+  
+  <div class="advisor-card">
+    <div class="card-icon" style="color: #f59e0b;">🌱</div>
+    <div class="card-title">Crop Care Schedule</div>
+    <div class="card-desc">
+      Personalized schedule based on your sowing dates and crop types.
+    </div>
+    <button class="btn" onclick="getCropSchedule()">View Schedule</button>
+  </div>
+  
+  <div class="advisor-card">
+    <div class="card-icon" style="color: #ef4444;">⚠️</div>
+    <div class="card-title">Risk Alerts</div>
+    <div class="card-desc">
+      Pest warnings, weather risks, market drops - proactive alerts.
+    </div>
+    <button class="btn" onclick="getRiskAlerts()">Check Risks</button>
+  </div>
+</div>
+
+<!-- AI Chat Advisor -->
+<div class="advisor-card" style="border-radius: 20px;">
+  <h3 style="color: #1e3a8a; margin-bottom: 20px;">💬 Ask Your AI Farm Expert</h3>
+  <div class="chat-container">
+    <div class="chat-header">
+      <div style="font-size: 18px; font-weight: 600;">AI Farm Advisor</div>
+      <div style="font-size: 12px; opacity: 0.8;">Government approved AI assistant</div>
+    </div>
+    <div class="chat-messages" id="advisorChat">
+      <div class="msg-bubble msg-ai" style="max-width: 100%; margin-bottom: 0;">
+        Hi farmer! Ask me about crop care, weather, market prices, pests, or your specific farm data. What's on your mind today? 🚜
+      </div>
+    </div>
+    <div class="chat-input-container">
+      <div class="chat-input">
+        <input type="text" class="message-input" id="advisorInput" placeholder="Type your farming question..." onkeypress="handleAdvisorKeypress(event)">
+        <button onclick="sendAdvisorMessage()" style="padding: 15px 25px; background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; border-radius: 25px; cursor: pointer; font-weight: 600; font-size: 16px;">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Government Integration -->
+<div style="text-align: center; margin-top: 50px;">
+  <h3 style="color: #1e3a8a; margin-bottom: 20px;">Trusted by Government Initiatives</h3>
+  <div class="govt-logos">
+    <div class="govt-logo">
+      <div style="font-size: 48px;">🇮🇳</div>
+      <div style="font-size: 12px;">Digital Agriculture</div>
+    </div>
+    <div class="govt-logo">
+      <div style="font-size: 48px;">🌾</div>
+      <div style="font-size: 12px;">Kisan e-Mitra</div>
+    </div>
+    <div class="govt-logo">
+      <div style="font-size: 48px;">☁️</div>
+      <div style="font-size: 12px;">IMD Weather API</div>
+    </div>
+  </div>
+</div>
+
+<script>
+let advisorMessages = [];
+
+function addAdvisorMessage(sender, message) {
+  const chat = document.getElementById('advisorChat');
+  const msg = document.createElement('div');
+  msg.className = `msg-bubble msg-${sender}`;
+  msg.innerHTML = message.replace(/\n/g, '<br>');
+  chat.appendChild(msg);
+  chat.scrollTop = chat.scrollHeight;
+  advisorMessages.push({ sender, message });
+}
+
+function sendAdvisorMessage() {
+  const input = document.getElementById('advisorInput');
+  const question = input.value.trim();
+  if (!question) return;
+  
+  addAdvisorMessage('user', question);
+  input.value = '';
+  
+  // Simulate AI response (extend with real govt APIs)
+  setTimeout(() => {
+    const responses = [
+      `Great question! Based on current IMD data, expect rain tomorrow. Perfect for irrigation. Check your tomato crops for fungal risks during wet weather. 💧`,
+      `Market prices for wheat are up 3.2% this week (AGMARKNET data). Good time to sell if harvest ready. Current MSP: ₹2275/quintal.`,
+      `For your growing crops, apply NPK fertilizer at 20kg/acre today. Water retention is 65% - consider drip irrigation upgrade.`,
+      `Pest alert: Armyworm activity high in your region. Recommend LeafGuard insecticide (₹85/250ml) as preventive spray.`,
+      `Based on your 25-acre farm with wheat & tomatoes, expected yield: Wheat 18Qt/acre, Tomatoes 25 tons/acre. Revenue potential: ₹1.2Cr`
+    ];
+    const response = responses[Math.floor(Math.random() * responses.length)];
+    addAdvisorMessage('ai', response);
+  }, 1500);
+}
+
+function handleAdvisorKeypress(e) {
+  if (e.key === 'Enter') {
+    sendAdvisorMessage();
+  }
+}
+
+function getWeatherAdvice() {
+  showToast('🌤️ Fetching IMD weather advisory...', 'success');
+  addAdvisorMessage('ai', 'Today: 28-34°C, 60% humidity, light rain PM. Optimal for irrigation. Avoid leaf spraying after 4PM.');
+}
+
+function getMarketAdvice() {
+  showToast('📈 Loading market intelligence...', 'success');
+  addAdvisorMessage('ai', 'Wheat +2.3%, Tomato -1.8%, Rice stable. Sell wheat now, hold tomatoes.');
+}
+
+function getCropSchedule() {
+  showToast('🌱 Generating crop schedule...', 'success');
+  addAdvisorMessage('ai', 'Week 1: Soil prep & sowing\nWeek 2: First irrigation\nWeek 4: Fertilizer application\nWeek 8: Pest scouting');
+}
+
+function getRiskAlerts() {
+  showToast('⚠️ Checking risks...', 'success');
+  addAdvisorMessage('ai', 'HIGH: Armyworm in wheat belt\nMEDIUM: Late blight tomatoes\nLOW: Drought risk');
+}
+</script>
+{% endblock %}
+

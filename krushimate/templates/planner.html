@@ -1,0 +1,723 @@
+{% extends "base.html" %}
+{% block title %}Farm Planner - Krushimate{% endblock %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --planner-bg: linear-gradient(135deg, #f7f3e8 0%, #eef6e8 45%, #e3f0ff 100%);
+    --planner-ink: #183153;
+    --planner-green: #285943;
+    --planner-sand: #fbf7ef;
+    --planner-orange: #ff8a3d;
+    --planner-red: #d64545;
+    --planner-blue: #3e6ff2;
+  }
+  .planner-page {
+    background: var(--planner-bg);
+    border-radius: 30px;
+    padding: 28px;
+    box-shadow: 0 20px 50px rgba(24, 49, 83, 0.12);
+  }
+  .planner-hero {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 24px;
+    margin-bottom: 24px;
+  }
+  .planner-intro {
+    background: radial-gradient(circle at top left, rgba(255,255,255,0.95), rgba(255,255,255,0.75));
+    border-radius: 28px;
+    padding: 32px;
+    border: 1px solid rgba(24, 49, 83, 0.08);
+  }
+  .planner-intro h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--planner-ink);
+    font-size: clamp(34px, 6vw, 58px);
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+  .planner-intro p {
+    color: #52627b;
+    font-size: 16px;
+    line-height: 1.7;
+    max-width: 720px;
+  }
+  .planner-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #fff4db;
+    color: #8a4b10;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+  .planner-greeting {
+    color: #274468;
+    font-weight: 700;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+  .planner-focus {
+    background: linear-gradient(160deg, #224733, #2d6a4f);
+    color: white;
+    border-radius: 28px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .planner-focus::after {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    background: rgba(255,255,255,0.09);
+    border-radius: 50%;
+    right: -30px;
+    top: -30px;
+  }
+  .focus-label {
+    font-size: 13px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    opacity: 0.8;
+    margin-bottom: 10px;
+  }
+  .focus-value {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 54px;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+  .focus-desc {
+    max-width: 260px;
+    line-height: 1.7;
+    opacity: 0.9;
+  }
+  .planner-grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 24px;
+  }
+  .planner-sidebar,
+  .planner-board {
+    background: rgba(255,255,255,0.82);
+    border-radius: 28px;
+    padding: 24px;
+    border: 1px solid rgba(24, 49, 83, 0.08);
+    backdrop-filter: blur(10px);
+  }
+  .planner-section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--planner-ink);
+    font-size: 24px;
+    margin-bottom: 18px;
+  }
+  .planner-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .planner-stat {
+    background: var(--planner-sand);
+    border-radius: 20px;
+    padding: 18px;
+    border: 1px solid rgba(24, 49, 83, 0.06);
+  }
+  .planner-stat strong {
+    display: block;
+    font-size: 28px;
+    color: var(--planner-ink);
+    margin-bottom: 6px;
+  }
+  .planner-stat span {
+    color: #5c6d85;
+    font-size: 13px;
+  }
+  .planner-form {
+    display: grid;
+    gap: 12px;
+  }
+  .planner-form input,
+  .planner-form select,
+  .planner-form textarea {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid #d7deea;
+    padding: 14px 16px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    background: white;
+  }
+  .planner-form textarea {
+    min-height: 86px;
+    resize: vertical;
+  }
+  .planner-btn {
+    border: none;
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .planner-btn:hover {
+    transform: translateY(-2px);
+  }
+  .planner-btn-primary {
+    background: linear-gradient(135deg, var(--planner-blue), #5b8cff);
+    color: white;
+    box-shadow: 0 12px 30px rgba(62, 111, 242, 0.25);
+  }
+  .planner-btn-secondary {
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: white;
+  }
+  .planner-board-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .planner-spotlight {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .planner-spotlight-card,
+  .planner-weather-card {
+    border-radius: 22px;
+    padding: 18px 20px;
+    border: 1px solid rgba(24, 49, 83, 0.08);
+  }
+  .planner-spotlight-card {
+    background: linear-gradient(135deg, rgba(62, 111, 242, 0.12), rgba(255, 255, 255, 0.92));
+  }
+  .planner-weather-card {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.14), rgba(255, 255, 255, 0.92));
+  }
+  .spotlight-label {
+    color: #5f7088;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .spotlight-title {
+    color: var(--planner-ink);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+  .spotlight-copy {
+    color: #56677f;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+  .planner-filter {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .planner-chip {
+    border: 1px solid #d1d9e6;
+    background: white;
+    color: #506178;
+    border-radius: 999px;
+    padding: 10px 14px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .planner-chip.active {
+    background: var(--planner-ink);
+    color: white;
+    border-color: var(--planner-ink);
+  }
+  .planner-columns {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .planner-column {
+    background: #f8fafc;
+    border-radius: 24px;
+    padding: 16px;
+    min-height: 420px;
+    border: 1px solid rgba(24, 49, 83, 0.06);
+  }
+  .planner-column h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: var(--planner-ink);
+    margin-bottom: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .column-count {
+    font-size: 13px;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 999px;
+    color: #52627b;
+  }
+  .task-stack {
+    display: grid;
+    gap: 14px;
+  }
+  .task-card {
+    background: white;
+    border-radius: 20px;
+    padding: 16px;
+    border-left: 6px solid var(--planner-blue);
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+  }
+  .task-card.overdue {
+    background: linear-gradient(135deg, #fff8f8, #ffffff);
+    box-shadow: 0 14px 32px rgba(214, 69, 69, 0.12);
+  }
+  .task-card.priority-high { border-left-color: var(--planner-red); }
+  .task-card.priority-medium { border-left-color: var(--planner-orange); }
+  .task-card.priority-low { border-left-color: #16a34a; }
+  .task-topline {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+  .task-title {
+    color: var(--planner-ink);
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .task-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+  }
+  .task-pill {
+    font-size: 12px;
+    border-radius: 999px;
+    padding: 6px 10px;
+    background: #eef2ff;
+    color: #43506a;
+    font-weight: 600;
+  }
+  .task-pill.task-pill-alert {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  .task-note {
+    color: #5a6a81;
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+  .task-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .task-action-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .task-done { background: #dcfce7; color: #166534; }
+  .task-progress { background: #dbeafe; color: #1d4ed8; }
+  .task-delete { background: #fee2e2; color: #b91c1c; }
+  .empty-column {
+    color: #7b8aa2;
+    text-align: center;
+    padding: 36px 14px;
+    line-height: 1.7;
+  }
+  .planner-toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-weight: 600;
+    display: none;
+    z-index: 2200;
+  }
+  .planner-toast.show { display: block; }
+  .planner-toast.success { background: linear-gradient(135deg, #16a34a, #22c55e); }
+  .planner-toast.error { background: linear-gradient(135deg, #dc2626, #ef4444); }
+  @media (max-width: 1080px) {
+    .planner-hero,
+    .planner-grid,
+    .planner-columns {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="planner-page">
+  <section class="planner-hero">
+    <div class="planner-intro">
+      <div class="planner-greeting">For {{ user.first_name if user else 'Your' }} farm account</div>
+      <div class="planner-tag">Smart Daily Rhythm</div>
+      <h1>Farm Planner</h1>
+      <p>
+        A living control room for your account. It auto-builds crop tasks from sowing timelines, gives you a clean daily focus,
+        and lets you add your own reminders so nothing important slips through the season.
+      </p>
+    </div>
+    <div class="planner-focus">
+      <div class="focus-label">Today's Focus</div>
+      <div class="focus-value" id="focusTaskCount">0</div>
+      <div class="focus-desc" id="focusTaskText">
+        Planner is getting your tasks ready.
+      </div>
+    </div>
+  </section>
+
+  <section class="planner-grid">
+    <aside class="planner-sidebar">
+      <h2 class="planner-section-title">Mission Control</h2>
+      <div class="planner-stats">
+        <div class="planner-stat">
+          <strong id="statPending">0</strong>
+          <span>Pending</span>
+        </div>
+        <div class="planner-stat">
+          <strong id="statToday">0</strong>
+          <span>Due Today</span>
+        </div>
+        <div class="planner-stat">
+          <strong id="statDone">0</strong>
+          <span>Completed</span>
+        </div>
+        <div class="planner-stat">
+          <strong id="statHigh">0</strong>
+          <span>High Priority</span>
+        </div>
+      </div>
+
+      <button class="planner-btn planner-btn-secondary" style="width:100%; margin-bottom:16px;" onclick="syncPlannerTasks()">
+        Generate Crop Schedule
+      </button>
+
+      <form class="planner-form" id="plannerTaskForm">
+        <input id="taskTitle" type="text" placeholder="Task title" required>
+        <select id="taskCrop">
+          <option value="">No crop link</option>
+        </select>
+        <select id="taskCategory">
+          <option value="General">General</option>
+          <option value="Irrigation">Irrigation</option>
+          <option value="Nutrition">Nutrition</option>
+          <option value="Protection">Protection</option>
+          <option value="Harvest">Harvest</option>
+          <option value="Market">Market</option>
+        </select>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <input id="taskDueDate" type="date">
+          <select id="taskPriority">
+            <option value="High">High</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="Low">Low</option>
+          </select>
+        </div>
+        <textarea id="taskNotes" placeholder="What makes this task important?"></textarea>
+        <button class="planner-btn planner-btn-primary" type="submit">Add Personal Task</button>
+      </form>
+    </aside>
+
+    <section class="planner-board">
+      <div class="planner-board-head">
+        <div>
+          <h2 class="planner-section-title" style="margin-bottom:6px;">Season Board</h2>
+          <div style="color:#60708a;">Generated crop workflow plus your own hand-crafted reminders.</div>
+        </div>
+        <div class="planner-filter">
+          <button class="planner-chip active" data-filter="all">All Tasks</button>
+          <button class="planner-chip" data-filter="Pending">Pending</button>
+          <button class="planner-chip" data-filter="In Progress">In Progress</button>
+          <button class="planner-chip" data-filter="Completed">Completed</button>
+        </div>
+      </div>
+
+      <div class="planner-spotlight">
+        <div class="planner-spotlight-card">
+          <div class="spotlight-label">Next Best Move</div>
+          <div class="spotlight-title" id="spotlightTitle">Loading your next task...</div>
+          <div class="spotlight-copy" id="spotlightCopy">Planner is reading your crop schedule and personal reminders.</div>
+        </div>
+        <div class="planner-weather-card">
+          <div class="spotlight-label">Season Pulse</div>
+          <div class="spotlight-title" id="seasonPulseTitle">Steady and ready</div>
+          <div class="spotlight-copy" id="seasonPulseCopy">Add crops or generate tasks to build a clean working rhythm for this account.</div>
+        </div>
+      </div>
+
+      <div class="planner-columns">
+        <div class="planner-column">
+          <h3>Needs Action <span class="column-count" id="pendingCount">0</span></h3>
+          <div class="task-stack" id="pendingTasks"></div>
+        </div>
+        <div class="planner-column">
+          <h3>In Motion <span class="column-count" id="progressCount">0</span></h3>
+          <div class="task-stack" id="progressTasks"></div>
+        </div>
+        <div class="planner-column">
+          <h3>Done Well <span class="column-count" id="completedCount">0</span></h3>
+          <div class="task-stack" id="completedTasks"></div>
+        </div>
+      </div>
+    </section>
+  </section>
+</div>
+
+<div class="planner-toast" id="plannerToast"></div>
+
+<script>
+let plannerTasks = [];
+let plannerCrops = [];
+let activeFilter = 'all';
+
+function normalizeDateString(value) {
+  if (!value) return '';
+  return new Date(`${value}T00:00:00`).toISOString().slice(0, 10);
+}
+
+function getTaskUrgency(task) {
+  const today = new Date().toISOString().slice(0, 10);
+  const dueDate = normalizeDateString(task.due_date);
+  if (dueDate && dueDate < today && task.status !== 'Completed') return 'overdue';
+  if (task.priority === 'High' && task.status !== 'Completed') return 'high';
+  return 'normal';
+}
+
+function sortTasks(tasks) {
+  return [...tasks].sort((left, right) => {
+    const urgencyOrder = { overdue: 0, high: 1, normal: 2 };
+    const urgencyDiff = urgencyOrder[getTaskUrgency(left)] - urgencyOrder[getTaskUrgency(right)];
+    if (urgencyDiff !== 0) return urgencyDiff;
+
+    const leftDate = left.due_date || '9999-12-31';
+    const rightDate = right.due_date || '9999-12-31';
+    if (leftDate !== rightDate) return leftDate.localeCompare(rightDate);
+
+    const leftPriority = { High: 0, Medium: 1, Low: 2 }[left.priority] ?? 3;
+    const rightPriority = { High: 0, Medium: 1, Low: 2 }[right.priority] ?? 3;
+    return leftPriority - rightPriority;
+  });
+}
+
+async function loadPlannerData() {
+  try {
+    const [tasksResponse, cropsResponse] = await Promise.all([
+      fetch('/api/planner_tasks'),
+      fetch('/api/user_crops')
+    ]);
+
+    if (tasksResponse.status === 401 || cropsResponse.status === 401) {
+      window.location.href = '/login';
+      return;
+    }
+
+    plannerTasks = tasksResponse.ok ? await tasksResponse.json() : [];
+    plannerCrops = cropsResponse.ok ? await cropsResponse.json() : [];
+    populateCropOptions();
+    renderPlanner();
+  } catch (error) {
+    showPlannerToast('Planner failed to load', 'error');
+  }
+}
+
+function populateCropOptions() {
+  const cropSelect = document.getElementById('taskCrop');
+  cropSelect.innerHTML = '<option value="">No crop link</option>' + plannerCrops.map((crop) => (
+    `<option value="${crop.id}">${crop.name}</option>`
+  )).join('');
+}
+
+function renderPlanner() {
+  const visibleTasks = sortTasks(activeFilter === 'all'
+    ? plannerTasks
+    : plannerTasks.filter((task) => task.status === activeFilter));
+
+  const buckets = {
+    pending: sortTasks(visibleTasks.filter((task) => task.status === 'Pending')),
+    progress: sortTasks(visibleTasks.filter((task) => task.status === 'In Progress')),
+    completed: sortTasks(visibleTasks.filter((task) => task.status === 'Completed'))
+  };
+
+  renderTaskBucket('pendingTasks', buckets.pending, 'No pending tasks. Your field rhythm is under control.');
+  renderTaskBucket('progressTasks', buckets.progress, 'Nothing is currently in motion. Start one task to keep momentum.');
+  renderTaskBucket('completedTasks', buckets.completed, 'No completed tasks yet. Today is still open for progress.');
+
+  document.getElementById('pendingCount').textContent = String(buckets.pending.length);
+  document.getElementById('progressCount').textContent = String(buckets.progress.length);
+  document.getElementById('completedCount').textContent = String(buckets.completed.length);
+
+  const today = new Date().toISOString().slice(0, 10);
+  const todayTasks = plannerTasks.filter((task) => normalizeDateString(task.due_date) === today && task.status !== 'Completed');
+  const pendingTasks = plannerTasks.filter((task) => task.status === 'Pending');
+  const completedTasks = plannerTasks.filter((task) => task.status === 'Completed');
+  const highPriorityTasks = plannerTasks.filter((task) => task.priority === 'High' && task.status !== 'Completed');
+  const overdueTasks = sortTasks(plannerTasks.filter((task) => getTaskUrgency(task) === 'overdue'));
+  const nextTask = sortTasks(plannerTasks.filter((task) => task.status !== 'Completed'))[0];
+
+  document.getElementById('statPending').textContent = String(pendingTasks.length);
+  document.getElementById('statToday').textContent = String(todayTasks.length);
+  document.getElementById('statDone').textContent = String(completedTasks.length);
+  document.getElementById('statHigh').textContent = String(highPriorityTasks.length);
+  document.getElementById('focusTaskCount').textContent = String(todayTasks.length);
+  document.getElementById('focusTaskText').textContent = todayTasks.length
+    ? `You have ${todayTasks.length} focused task${todayTasks.length === 1 ? '' : 's'} due today. Start with the most urgent one first.`
+    : 'No hard due dates today. Use this calm window to prepare the next crop move with intention.';
+
+  document.getElementById('spotlightTitle').textContent = nextTask
+    ? nextTask.title
+    : 'Your board is clear';
+  document.getElementById('spotlightCopy').textContent = nextTask
+    ? `${nextTask.category || 'General'} task${nextTask.crop_name ? ` for ${nextTask.crop_name}` : ''}${nextTask.due_date ? ` due on ${new Date(`${nextTask.due_date}T00:00:00`).toLocaleDateString()}` : ''}.`
+    : 'No active tasks right now. Add a personal reminder or generate crop tasks to stay ahead.';
+
+  document.getElementById('seasonPulseTitle').textContent = overdueTasks.length
+    ? `${overdueTasks.length} overdue task${overdueTasks.length === 1 ? '' : 's'}`
+    : highPriorityTasks.length
+      ? `${highPriorityTasks.length} high-priority task${highPriorityTasks.length === 1 ? '' : 's'}`
+      : 'Steady and ready';
+  document.getElementById('seasonPulseCopy').textContent = overdueTasks.length
+    ? 'Clear the overdue lane first so your crop work does not start stacking into tomorrow.'
+    : highPriorityTasks.length
+      ? 'Your season is healthy, but a few high-priority actions deserve attention before routine work.'
+      : 'Your planner is balanced right now. Keep feeding it with crop dates and personal reminders.';
+}
+
+function renderTaskBucket(containerId, tasks, emptyText) {
+  const container = document.getElementById(containerId);
+  if (!tasks.length) {
+    container.innerHTML = `<div class="empty-column">${emptyText}</div>`;
+    return;
+  }
+
+  container.innerHTML = tasks.map((task) => {
+    const dueLabel = task.due_date ? new Date(`${task.due_date}T00:00:00`).toLocaleDateString() : 'No due date';
+    const urgency = getTaskUrgency(task);
+    return `
+      <article class="task-card priority-${String(task.priority || 'Medium').toLowerCase()} ${urgency === 'overdue' ? 'overdue' : ''}">
+        <div class="task-topline">
+          <div class="task-title">${task.title}</div>
+        </div>
+        <div class="task-meta">
+          <span class="task-pill">${task.category || 'General'}</span>
+          <span class="task-pill">${task.priority || 'Medium'} priority</span>
+          <span class="task-pill">${dueLabel}</span>
+          ${urgency === 'overdue' ? `<span class="task-pill task-pill-alert">Overdue</span>` : ''}
+          ${task.crop_name ? `<span class="task-pill">${task.crop_name}</span>` : ''}
+          ${task.source === 'system' ? `<span class="task-pill">Auto-plan</span>` : `<span class="task-pill">Personal</span>`}
+        </div>
+        <div class="task-note">${task.notes || 'No notes added for this task yet.'}</div>
+        <div class="task-actions">
+          ${task.status !== 'Completed' ? `<button class="task-action-btn task-done" onclick="updateTaskStatus(${task.id}, 'Completed')">Mark Done</button>` : ''}
+          ${task.status === 'Pending' ? `<button class="task-action-btn task-progress" onclick="updateTaskStatus(${task.id}, 'In Progress')">Start</button>` : ''}
+          ${task.status === 'In Progress' ? `<button class="task-action-btn task-progress" onclick="updateTaskStatus(${task.id}, 'Pending')">Pause</button>` : ''}
+          <button class="task-action-btn task-delete" onclick="deleteTask(${task.id})">Delete</button>
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+async function updateTaskStatus(taskId, status) {
+  try {
+    const response = await fetch(`/api/planner_tasks/${taskId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    if (!response.ok) throw new Error('Task update failed');
+    await loadPlannerData();
+    showPlannerToast('Planner updated');
+  } catch (error) {
+    showPlannerToast('Unable to update task', 'error');
+  }
+}
+
+async function deleteTask(taskId) {
+  if (!confirm('Delete this task from your planner?')) return;
+  try {
+    const response = await fetch(`/api/planner_tasks/${taskId}`, { method: 'DELETE' });
+    if (!response.ok) throw new Error('Task delete failed');
+    await loadPlannerData();
+    showPlannerToast('Task removed');
+  } catch (error) {
+    showPlannerToast('Unable to delete task', 'error');
+  }
+}
+
+async function syncPlannerTasks() {
+  try {
+    const response = await fetch('/api/planner_tasks/sync', { method: 'POST' });
+    if (!response.ok) throw new Error('Sync failed');
+    await loadPlannerData();
+    showPlannerToast('Fresh crop tasks generated');
+  } catch (error) {
+    showPlannerToast('Unable to generate crop schedule', 'error');
+  }
+}
+
+document.getElementById('plannerTaskForm').addEventListener('submit', async (event) => {
+  event.preventDefault();
+  const payload = {
+    title: document.getElementById('taskTitle').value.trim(),
+    crop_id: document.getElementById('taskCrop').value || null,
+    category: document.getElementById('taskCategory').value,
+    due_date: document.getElementById('taskDueDate').value || null,
+    priority: document.getElementById('taskPriority').value,
+    notes: document.getElementById('taskNotes').value.trim()
+  };
+
+  try {
+    const response = await fetch('/api/planner_tasks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) throw new Error('Task creation failed');
+    document.getElementById('plannerTaskForm').reset();
+    await loadPlannerData();
+    showPlannerToast('Personal task added');
+  } catch (error) {
+    showPlannerToast('Unable to create task', 'error');
+  }
+});
+
+document.querySelectorAll('.planner-chip').forEach((chip) => {
+  chip.addEventListener('click', () => {
+    document.querySelectorAll('.planner-chip').forEach((other) => other.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.filter;
+    renderPlanner();
+  });
+});
+
+function showPlannerToast(message, type = 'success') {
+  const toast = document.getElementById('plannerToast');
+  toast.textContent = message;
+  toast.className = `planner-toast ${type} show`;
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+loadPlannerData();
+</script>
+{% endblock %}

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Krushimate - Smart Farming</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <style>
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 25px;
+      border-radius: 12px;
+      color: white;
+      font-weight: 500;
+      z-index: 2000;
+      animation: slideIn 0.3s ease;
+      display: none;
+    }
+    .toast.show { display: block; }
+    .toast-success { background: #10b981; }
+    .toast-error { background: #ef4444; }
+    @keyframes slideIn {
+      from { transform: translateX(100px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="card">
+      <div style="display:flex;align-items:center;gap:10px;flex:1;">
+        <div class="logo"><i class="fas fa-seedling"></i></div>
+        <div>
+          <h1>Krushimate</h1>
+          <div class="muted">Smart Farming App</div>
+        </div>
+      </div>
+      <nav>
+        <a href="/dashboard" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
+<a href="/crops"><i class="fas fa-leaf"></i> Crops</a>
+        <a href="/planner"><i class="fas fa-calendar-check"></i> Planner</a>
+        <a href="/farm-gallery"><i class="fas fa-images"></i> Gallery</a>
+        <a href="/medicine"><i class="fas fa-pills"></i> Medicine</a>
+        <a href="/market"><i class="fas fa-store"></i> Market</a>
+        <a href="/weather"><i class="fas fa-cloud-sun"></i> Weather</a>
+
+        <a href="/disease"><i class="fas fa-bug"></i> Disease</a>
+        <a href="/ai_advisor"><i class="fas fa-robot"></i> AI Advisor</a>
+        <a href="/crop-consultant-contact"><i class="fas fa-user-md"></i> Consultants</a>
+        <a href="/profile"><i class="fas fa-user"></i> Profile</a>
+
+      </nav>
+    </header>
+    <main style="margin-top:16px">
+      {% block content %}{% endblock %}
+    </main>
+    
+    <!-- Footer with Contact Info -->
+    <footer class="footer card">
+      <div class="footer-links">
+        <a href="https://instagram.com/krushimate" target="_blank"><i class="fab fa-instagram"></i> @krushimate</a>
+        <a href="https://krushimate.com" target="_blank"><i class="fas fa-globe"></i> krushimate.com</a>
+        <a href="tel:+919876543210"><i class="fas fa-phone"></i> +91 98765 43210</a>
+        <a href="mailto:support@krushimate.com"><i class="fas fa-envelope"></i> support@krushimate.com</a>
+      </div>
+      <div class="muted" style="margin-top:16px;">
+        © 2024 Krushimate. Empowering farmers with smart technology.
+      </div>
+    </footer>
+  </div>
+  
+  <div class="toast" id="toast"></div>
+  <script>
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    if (toast) {
+      toast.textContent = message;
+      toast.className = `toast toast-${type} show`;
+      setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+  }
+  </script>
+</body>
+</html>

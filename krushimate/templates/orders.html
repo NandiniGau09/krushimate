@@ -1,0 +1,618 @@
+
+{% extends "base.html" %}
+{% block title %}My Orders - Krushimate{% endblock %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+  body {
+    background: linear-gradient(135deg, #1a472a 0%, #2d5a3f 50%, #1a472a 100%);
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .orders-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.95);
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+  }
+  .orders-header {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #1a472a;
+  }
+  .orders-header h1 {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+  .orders-header p {
+    color: #6b7280;
+    font-size: 16px;
+  }
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  }
+  .orders-table th {
+    background: linear-gradient(135deg, #2d5a3f, #4a7c59);
+    color: white;
+    padding: 18px 16px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .orders-table td {
+    padding: 18px 16px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .orders-table tr:hover {
+    background: #f9fafb;
+  }
+  .status-badge {
+    padding: 8px 16px;
+    border-radius: 25px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .status-pending {
+    background: #fef3cd;
+    color: #92400e;
+  }
+  .status-confirmed {
+    background: #dbeafe;
+    color: #1e40af;
+  }
+  .status-delivered {
+    background: #d1fae5;
+    color: #065f46;
+  }
+  .btn-view-bill {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 13px;
+  }
+  .btn-view-bill:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+  }
+  .btn-clear-all {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: all 0.3s;
+  }
+  .btn-clear-all:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4);
+  }
+  .empty-state {
+    text-align: center;
+    padding: 80px 40px;
+    color: #6b7280;
+  }
+  .empty-state-icon {
+    font-size: 80px;
+    margin-bottom: 25px;
+    opacity: 0.5;
+  }
+  .no-orders-link {
+    background: linear-gradient(135deg, #2d5a3f, #4a7c59);
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 20px;
+    transition: all 0.3s;
+  }
+  .no-orders-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(45, 90, 63, 0.4);
+  }
+  .toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 500;
+    z-index: 2000;
+    animation: slideIn 0.3s ease;
+    display: none;
+  }
+  .toast.show { display: block; }
+  .toast.success { background: linear-gradient(135deg, #10b981, #059669); }
+  .toast.error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  .bill-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.75);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 3000;
+  }
+  .bill-modal.show { display: flex; }
+  .bill-shell {
+    width: min(100%, 920px);
+    max-height: 92vh;
+    overflow: auto;
+    background: #f3f4f6;
+    border-radius: 24px;
+    box-shadow: 0 25px 60px rgba(15, 23, 42, 0.4);
+    padding: 24px;
+  }
+  .bill-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .bill-toolbar h2 {
+    color: #111827;
+    font-size: 22px;
+  }
+  .bill-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .bill-action-btn {
+    border: none;
+    border-radius: 12px;
+    padding: 12px 18px;
+    font-weight: 600;
+    cursor: pointer;
+    color: white;
+  }
+  .bill-download { background: linear-gradient(135deg, #dc2626, #ef4444); }
+  .bill-close { background: linear-gradient(135deg, #475569, #64748b); }
+  .retail-bill {
+    width: 800px;
+    max-width: 100%;
+    margin: 0 auto;
+    background: white;
+    color: #111827;
+    border: 1px solid #d1d5db;
+  }
+  .bill-topband {
+    height: 14px;
+    background: linear-gradient(90deg, #dc2626, #f97316, #dc2626);
+  }
+  .bill-header {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 24px;
+    padding: 26px 28px 18px;
+    border-bottom: 3px solid #ef4444;
+  }
+  .brand-mark {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: #dc2626;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .bill-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #b91c1c;
+    margin-bottom: 6px;
+  }
+  .bill-subtitle, .bill-meta, .bill-customer {
+    color: #4b5563;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .bill-meta-card {
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .bill-section {
+    padding: 20px 28px;
+  }
+  .bill-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #b91c1c;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+  .bill-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .bill-table thead th {
+    background: #fee2e2;
+    color: #991b1b;
+    text-align: left;
+    padding: 12px 10px;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+  .bill-table tbody td {
+    padding: 12px 10px;
+    border-bottom: 1px dashed #d1d5db;
+    vertical-align: top;
+  }
+  .bill-table .num { text-align: right; }
+  .bill-summary {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 24px;
+    align-items: start;
+  }
+  .bill-notes {
+    background: #f9fafb;
+    border: 1px dashed #cbd5e1;
+    border-radius: 14px;
+    padding: 16px;
+    color: #4b5563;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .bill-totals {
+    border: 1px solid #fecaca;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .bill-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 16px;
+    font-size: 14px;
+    border-bottom: 1px solid #fee2e2;
+    background: #fff;
+  }
+  .bill-total-row:last-child { border-bottom: none; }
+  .bill-grand-total {
+    background: #dc2626;
+    color: white;
+    font-weight: 700;
+    font-size: 17px;
+  }
+  .bill-footer {
+    padding: 18px 28px 28px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 12px;
+    line-height: 1.8;
+  }
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @media (max-width: 768px) {
+    .orders-table { font-size: 13px; }
+    .orders-table th, .orders-table td { padding: 12px 8px; }
+    .bill-header, .bill-summary { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="orders-container">
+  <div class="orders-header">
+    <h1>📦 My Orders</h1>
+    <p>Track all your medicine and fertilizer orders</p>
+  </div>
+  
+  <div id="ordersContent">
+    <table class="orders-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="ordersTableBody">
+        <tr>
+          <td colspan="6" class="empty-state">
+            <div class="empty-state-icon">📦</div>
+            <p>No orders found</p>
+            <p style="font-size: 14px; margin-top: 10px;">Your medicine orders will appear here</p>
+            <a href="/medicine" class="no-orders-link">🛒 Continue Shopping</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <button onclick="clearAllOrders()" class="btn-clear-all" id="clearOrdersBtn" style="display: none;">
+    🗑️ Clear All Orders
+  </button>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="bill-modal" id="billModal">
+  <div class="bill-shell">
+    <div class="bill-toolbar">
+      <h2>Retail Bill Preview</h2>
+      <div class="bill-actions">
+        <button class="bill-action-btn bill-download" onclick="downloadBillPdf()">Download PDF</button>
+        <button class="bill-action-btn bill-close" onclick="closeBillModal()">Close</button>
+      </div>
+    </div>
+    <div id="billPreview"></div>
+  </div>
+</div>
+
+<script>
+let orders = [];
+let activeBillOrder = null;
+
+async function loadOrders() {
+  try {
+    const response = await fetch('/api/user_medicine_orders');
+    if (!response.ok) {
+      if (response.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    orders = Array.isArray(data) ? data : [];
+    renderOrders();
+  } catch (error) {
+    console.error('Load orders error:', error);
+    showToast('Please login to view orders', 'error');
+  }
+}
+
+
+function renderOrders() {
+  const tbody = document.getElementById('ordersTableBody');
+  const clearBtn = document.getElementById('clearOrdersBtn');
+  
+  if (orders.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="6" class="empty-state">
+          <div class="empty-state-icon">📦</div>
+          <p>No orders found</p>
+          <p style="font-size: 14px; margin-top: 10px;">Your medicine orders will appear here</p>
+          <a href="/medicine" class="no-orders-link">🛒 Continue Shopping</a>
+        </td>
+      </tr>
+    `;
+    clearBtn.style.display = 'none';
+    return;
+  }
+  
+  clearBtn.style.display = 'inline-block';
+  
+  tbody.innerHTML = orders.map(order => `
+    <tr>
+      <td><strong>${order.id || 'N/A'}</strong></td>
+      <td>${order.items || 0}</td>
+      <td><strong>₹${order.total?.toLocaleString() || '0'}</strong></td>
+      <td>${order.date || 'N/A'}</td>
+      <td><span class="status-badge status-${order.status?.toLowerCase() || 'pending'}">${order.status || 'Pending'}</span></td>
+      <td><button class="btn-view-bill" onclick="viewOrderBill('${order.id}')">View Bill</button></td>
+    </tr>
+  `).join('');
+}
+
+async function clearAllOrders() {
+  if (!confirm('Delete all your orders? This cannot be undone.')) return;
+  
+  try {
+    const response = await fetch('/api/user_medicine_orders', { method: 'DELETE' });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+    orders = [];
+    renderOrders();
+    showToast('All orders cleared', 'success');
+  } catch (error) {
+    showToast('Failed to clear orders', 'error');
+  }
+}
+
+function viewOrderBill(orderId) {
+  const order = orders.find((item) => String(item.id) === String(orderId));
+  if (!order) {
+    showToast('Order details not found', 'error');
+    return;
+  }
+  activeBillOrder = order;
+  document.getElementById('billPreview').innerHTML = buildRetailBill(order);
+  document.getElementById('billModal').classList.add('show');
+}
+
+function buildRetailBill(order) {
+  const items = Array.isArray(order.order_data?.items) ? order.order_data.items : [];
+  const subtotal = items.reduce((sum, item) => sum + ((item.price || 0) * (item.quantity || 1)), 0);
+  const cgst = subtotal * 0.025;
+  const sgst = subtotal * 0.025;
+  const total = Number(order.total || subtotal + cgst + sgst);
+  const customer = JSON.parse(localStorage.getItem('user') || '{}');
+
+  return `
+    <div class="retail-bill" id="billPrintable">
+      <div class="bill-topband"></div>
+      <div class="bill-header">
+        <div>
+          <div class="brand-mark">K M</div>
+          <div class="bill-title">KRUSHIMATE MART</div>
+          <div class="bill-subtitle">Smart Farming Supplies | Tax Invoice</div>
+          <div class="bill-meta">
+            Village Road Agro Center, India<br>
+            GSTIN: 27ABCDE1234F1Z5<br>
+            Helpline: +91 98765 43210
+          </div>
+        </div>
+        <div class="bill-meta-card">
+          <div class="bill-section-title">Invoice Details</div>
+          <div class="bill-meta">
+            Invoice No: KM-${order.id}<br>
+            Order Date: ${order.date || 'N/A'}<br>
+            Payment Mode: Cash / UPI<br>
+            Order Status: ${order.status || 'Pending'}
+          </div>
+        </div>
+      </div>
+      <div class="bill-section">
+        <div class="bill-section-title">Customer</div>
+        <div class="bill-customer">
+          ${customer.first_name || customer.username || 'Farmer'} ${customer.last_name || ''}<br>
+          ${customer.contact || 'Contact not available'}<br>
+          ${customer.city || 'City not available'}
+        </div>
+      </div>
+      <div class="bill-section">
+        <table class="bill-table">
+          <thead>
+            <tr>
+              <th style="width: 60px;">S.No.</th>
+              <th>Item Description</th>
+              <th class="num" style="width: 90px;">Qty</th>
+              <th class="num" style="width: 110px;">Rate</th>
+              <th class="num" style="width: 130px;">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${items.map((item, index) => `
+              <tr>
+                <td>${index + 1}</td>
+                <td>
+                  <strong>${item.name}</strong><br>
+                  <span style="color:#6b7280;">Agro retail item</span>
+                </td>
+                <td class="num">${item.quantity || 1}</td>
+                <td class="num">Rs ${(item.price || 0).toFixed(2)}</td>
+                <td class="num">Rs ${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="bill-section">
+        <div class="bill-summary">
+          <div class="bill-notes">
+            <strong>Terms & Conditions</strong><br>
+            Goods once sold will not be taken back without bill.<br>
+            Please keep this invoice for warranty, support, and return verification.<br>
+            Thank you for shopping with Krushimate Mart.
+          </div>
+          <div class="bill-totals">
+            <div class="bill-total-row"><span>Sub Total</span><strong>Rs ${subtotal.toFixed(2)}</strong></div>
+            <div class="bill-total-row"><span>CGST @ 2.5%</span><strong>Rs ${cgst.toFixed(2)}</strong></div>
+            <div class="bill-total-row"><span>SGST @ 2.5%</span><strong>Rs ${sgst.toFixed(2)}</strong></div>
+            <div class="bill-total-row bill-grand-total"><span>Grand Total</span><strong>Rs ${total.toFixed(2)}</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="bill-footer">
+        This is a computer-generated invoice and does not require a signature.<br>
+        For support, contact support@krushimate.com
+      </div>
+    </div>
+  `;
+}
+
+function closeBillModal() {
+  document.getElementById('billModal').classList.remove('show');
+}
+
+async function downloadBillPdf() {
+  if (!activeBillOrder) {
+    showToast('No bill selected', 'error');
+    return;
+  }
+
+  const billNode = document.getElementById('billPrintable');
+  if (!billNode || !window.html2canvas || !window.jspdf) {
+    showToast('PDF library not available', 'error');
+    return;
+  }
+
+  try {
+    const canvas = await window.html2canvas(billNode, { scale: 2, backgroundColor: '#ffffff' });
+    const imgData = canvas.toDataURL('image/png');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = pdf.internal.pageSize.getWidth();
+    const pageHeight = pdf.internal.pageSize.getHeight();
+    const imgWidth = pageWidth - 16;
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+    let y = 8;
+    pdf.addImage(imgData, 'PNG', 8, y, imgWidth, imgHeight);
+    let remainingHeight = imgHeight - (pageHeight - 16);
+    let offset = pageHeight - 8;
+
+    while (remainingHeight > 0) {
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 8, 8 - offset, imgWidth, imgHeight);
+      remainingHeight -= (pageHeight - 16);
+      offset += (pageHeight - 16);
+    }
+
+    pdf.save(`krushimate-bill-${activeBillOrder.id}.pdf`);
+    showToast('Bill PDF downloaded', 'success');
+  } catch (error) {
+    showToast('Failed to download PDF', 'error');
+  }
+}
+
+document.getElementById('billModal').addEventListener('click', (event) => {
+  if (event.target.id === 'billModal') {
+    closeBillModal();
+  }
+});
+
+function showToast(message, type = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = `toast ${type} show`;
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Load orders on page load
+loadOrders();
+</script>
+{% endblock %}  
+

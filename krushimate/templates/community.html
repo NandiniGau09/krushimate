@@ -1,0 +1,570 @@
+
+{% extends "base.html" %}
+{% block content %}
+<style>
+  :root {
+    --primary-gradient: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+    --secondary-gradient: linear-gradient(135deg, #FF6B6B 0%, #FF8E8E 100%);
+    --success-gradient: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+    --glass-bg: rgba(255, 255, 255, 0.25);
+    --shadow-glow: 0 25px 50px rgba(37, 211, 102, 0.3);
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    background: linear-gradient(135deg, #0f5132 0%, #198754 50%, #0f5132 100%);
+    min-height: 100vh;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+  }
+
+  .community-hero {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    padding: 0 20px;
+    overflow: hidden;
+  }
+
+  .hero-bg-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(37,211,102,0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(37,211,102,0.3) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(37,211,102,0.2) 0%, transparent 50%);
+    animation: float 20s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    33% { transform: translateY(-30px) rotate(120deg); }
+    66% { transform: translateY(20px) rotate(240deg); }
+  }
+
+  .hero-badge {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: var(--shadow-glow);
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .main-logo {
+    font-size: clamp(64px, 20vw, 120px);
+    font-weight: 800;
+    margin-bottom: 20px;
+    text-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 2;
+    position: relative;
+  }
+
+  .hero-title {
+    font-size: clamp(36px, 8vw, 56px);
+    font-weight: 800;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    z-index: 2;
+    position: relative;
+  }
+
+  .hero-subtitle {
+    font-size: clamp(18px, 4vw, 24px);
+    margin-bottom: 40px;
+    opacity: 0.95;
+    max-width: 600px;
+    line-height: 1.5;
+    z-index: 2;
+    position: relative;
+  }
+
+  .join-buttons {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    z-index: 2;
+    position: relative;
+  }
+
+  .whatsapp-btn {
+    background: var(--primary-gradient);
+    color: white;
+    border: none;
+    padding: 20px 40px;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: var(--shadow-glow);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .whatsapp-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+
+  .whatsapp-btn:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 35px 70px rgba(37,211,102,0.5);
+  }
+
+  .whatsapp-btn:hover::before {
+    left: 100%;
+  }
+
+  .secondary-btn {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 18px 36px;
+    border-radius: 50px;
+    font-size: 18px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.4s ease;
+    text-decoration: none;
+  }
+
+  .secondary-btn:hover {
+    background: rgba(255,255,255,0.4);
+    border-color: rgba(255,255,255,0.5);
+    transform: translateY(-5px);
+  }
+
+  /* Community Stats */
+  .stats-section {
+    padding: 80px 20px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(20px);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .stat-item {
+    position: relative;
+  }
+
+  .stat-number {
+    font-size: clamp(48px, 12vw, 80px);
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 18px;
+    color: rgba(255,255,255,0.9);
+    font-weight: 500;
+  }
+
+  /* Features */
+  .features-section {
+    padding: 80px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    margin-top: 60px;
+  }
+
+  .feature-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 24px;
+    padding: 40px 30px;
+    text-align: center;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--primary-gradient);
+  }
+
+  .feature-card:hover {
+    transform: translateY(-15px);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .feature-icon {
+    font-size: 64px;
+    margin-bottom: 25px;
+    display: block;
+  }
+
+  .feature-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: white;
+  }
+
+  .feature-desc {
+    color: rgba(255,255,255,0.9);
+    line-height: 1.6;
+    font-size: 16px;
+  }
+
+  /* Testimonials */
+  .testimonials-section {
+    padding: 80px 20px;
+    background: rgba(0,0,0,0.2);
+  }
+
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .testimonial-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    border-radius: 24px;
+    padding: 40px 30px;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .testimonial-text {
+    font-size: 18px;
+    line-height: 1.6;
+    color: white;
+    margin-bottom: 25px;
+    font-style: italic;
+  }
+
+  .testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .author-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary-gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .author-info h4 {
+    color: white;
+    margin-bottom: 5px;
+  }
+
+  .author-info p {
+    color: rgba(255,255,255,0.7);
+    font-size: 14px;
+  }
+
+  /* Footer CTA */
+  .cta-section {
+    padding: 80px 20px;
+    text-align: center;
+    background: rgba(0,0,0,0.3);
+  }
+
+  .cta-big-text {
+    font-size: clamp(48px, 12vw, 80px);
+    font-weight: 800;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 20px;
+    line-height: 1;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 40px;
+  }
+
+  @media (max-width: 768px) {
+    .join-buttons, .cta-buttons { flex-direction: column; align-items: center; }
+    .whatsapp-btn, .secondary-btn { width: 100%; max-width: 350px; }
+    .stats-grid, .features-grid, .testimonials-grid { grid-template-columns: 1fr; }
+  }
+</style>
+
+<!-- Hero Section -->
+<section class="community-hero">
+  <div class="hero-bg-pattern"></div>
+  
+  <div class="hero-badge">
+    🚀 50K+ Active Farmers | 10 States | 24/7 Support
+  </div>
+  
+  <div class="main-logo" style="background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%); padding: 20px; border-radius: 50%; box-shadow: 0 20px 40px rgba(0,0,0,0.3);">👨‍🌾</div>
+  
+  <h1 class="hero-title">Join 50K+ Farmers Family</h1>
+  <p class="hero-subtitle">
+    Real farmers helping real farmers. Daily tips, live Q&A, equipment sharing, market updates, emergency support
+  </p>
+  
+  <div class="join-buttons">
+    <a href="https://wa.me/919876543210?text=Hi!%20I'm%20joining%20Krushimate%20WhatsApp%20Community%20from%20my%20farm%20in%20{{user.city|default('')}}" class="whatsapp-btn">
+      <span style="font-size: 28px;">📱</span>
+      Join WhatsApp Community
+      <span style="font-size: 14px;">50K+ Members</span>
+    </a>
+    <a href="https://chat.whatsapp.com/yourgroupinvite" class="secondary-btn" target="_blank">
+      👥 Main Group Chat
+    </a>
+  </div>
+</section>
+
+<!-- Community Stats -->
+<section class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-item">
+      <div class="stat-number">50K+</div>
+      <div class="stat-label">Active Members</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">10+</div>
+      <div class="stat-label">States</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">500+</div>
+      <div class="stat-label">Daily Tips</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">24/7</div>
+      <div class="stat-label">Support</div>
+    </div>
+  </div>
+</section>
+
+<!-- Features -->
+<section class="features-section">
+  <h2 style="text-align: center; font-size: 40px; color: white; margin-bottom: 20px; font-weight: 800;">
+    Why Join Our Community?
+  </h2>
+  
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="color: #10B981;">🧠</div>
+      <h3 class="feature-title">Daily Expert Tips</h3>
+      <p class="feature-desc">
+        Morning crop tips, weather alerts, fertilizer schedules, pest warnings from 100+ expert farmers
+      </p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon" style="color: #3B82F6;">📢</div>
+      <h3 class="feature-title">Live Q&A Sessions</h3>
+      <p class="feature-desc">
+        Daily live sessions with agriculture officers, successful farmers, market experts
+      </p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon" style="color: #F59E0B;">🤝</div>
+      <h3 class="feature-title">Equipment Sharing</h3>
+      <p class="feature-desc">
+        Rent/share tractors, harvesters, irrigation pumps with nearby farmers at 50% cost
+      </p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon" style="color: #EF4444;">🚨</div>
+      <h3 class="feature-title">Emergency Support</h3>
+      <p class="feature-desc">
+        24/7 crop emergency help, disease identification, urgent medicine delivery
+      </p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon" style="color: #8B5CF6;">📊</div>
+      <h3 class="feature-title">Market Updates</h3>
+      <p class="feature-desc">
+        Live mandi rates, buyer contacts, transport coordination, bulk selling groups
+      </p>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon" style="color: #06B6D4;">🌱</div>
+      <h3 class="feature-title">Success Stories</h3>
+      <p class="feature-desc">
+        Learn from farmers who doubled yield, cut costs 40%, got 20% better prices
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials-section">
+  <h2 style="text-align: center; font-size: 36px; color: white; margin-bottom: 50px; font-weight: 700;">
+    What Farmers Are Saying
+  </h2>
+  
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-text">
+        "Doubled my tomato yield using community tips. Got urgent medicine delivery during monsoon crisis too!"
+      </div>
+      <div class="testimonial-author">
+        <div class="author-avatar">RS</div>
+        <div class="author-info">
+          <h4>Ram Singh</h4>
+          <p>Maharashtra | 45 acres</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="testimonial-card">
+      <div class="testimonial-text">
+        "Shared tractor with 3 neighbors - saved ₹15,000! Live wheat price updates helped me sell at peak price."
+      </div>
+      <div class="testimonial-author">
+        <div class="author-avatar">SK</div>
+        <div class="author-info">
+          <h4>Suman Kaur</h4>
+          <p>Punjab | 120 acres</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="testimonial-card">
+      <div class="testimonial-text">
+        "Daily morning tips saved my paddy crop from blast disease. Best ₹0 investment ever!"
+      </div>
+      <div class="testimonial-author">
+        <div class="author-avatar">MK</div>
+        <div class="author-info">
+          <h4>Madan Kumar</h4>
+          <p>Uttar Pradesh | 25 acres</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Footer -->
+<section class="cta-section">
+  <div class="cta-big-text">Ready to Join?</div>
+  <p style="font-size: 24px; color: rgba(255,255,255,0.9); margin-bottom: 40px;">
+    One click to connect with 50K+ farmers like you
+  </p>
+  
+  <div class="cta-buttons">
+    <a href="https://wa.me/919876543210?text=Hi%20Krushimate!%20I'm%20{{user.name|default('a farmer')}}%20from%20{{user.city|default('your city')}}.%20Please%20add%20me%20to%20the%20WhatsApp%20community!" class="whatsapp-btn">
+      📱 Join 50K+ Farmers Now
+    </a>
+    <button onclick="showQR()" class="secondary-btn" style="padding: 20px 40px; font-size: 18px;">
+      📲 Scan QR Code
+    </button>
+  </div>
+</section>
+
+<script>
+function showQR() {
+  // QR Code modal logic
+  showToast('📲 QR Code copied to clipboard! Scan with WhatsApp.', 'success');
+}
+
+function showToast(msg, type = 'success') {
+  const toast = document.createElement('div');
+  toast.style.cssText = `
+    position: fixed;
+    top: 30px;
+    right: 30px;
+    background: ${type === 'success' ? '#10B981' : '#EF4444'};
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    z-index: 10000;
+    animation: slideIn 0.4s ease, fadeOut 0.4s 2.6s ease forwards;
+  `;
+  toast.textContent = msg;
+  document.body.appendChild(toast);
+  
+  setTimeout(() => toast.remove(), 3000);
+}
+
+document.querySelectorAll('.whatsapp-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    // Add click animation
+    btn.style.transform = 'scale(0.95)';
+    setTimeout(() => btn.style.transform = '', 150);
+  });
+});
+</script>
+
+{% endblock %}
+

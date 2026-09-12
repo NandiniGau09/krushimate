@@ -1,0 +1,564 @@
+
+{% extends "base.html" %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+  :root {
+    --ai-gradient: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%);
+    --secondary-gradient: linear-gradient(135deg, #ec4899 0%, #f43f5e 100%);
+    --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    --glass: rgba(255, 255, 255, 0.1);
+    --glass-dark: rgba(30, 58, 138, 0.3);
+    --glow: 0 0 40px rgba(139, 92, 246, 0.5);
+    --shadow-neo: 0 20px 60px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .ai-hero {
+    background: radial-gradient(ellipse at center, #1e1b4b 0%, #0f0f23 70%, #000000 100%);
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+
+  .hero-particles {
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(2px 2px at 20px 30px, #8b5cf6, transparent),
+      radial-gradient(2px 2px at 40px 70px, #3b82f6, transparent),
+      radial-gradient(1px 1px at 90px 40px, #06b6d4, transparent),
+      radial-gradient(1px 1px at 130px 80px, #ec4899, transparent),
+      radial-gradient(2px 2px at 160px 30px, #10b981, transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: particleFloat 20s linear infinite;
+  }
+
+  @keyframes particleFloat {
+    to { transform: translateY(-100px) rotate(360deg); }
+  }
+
+  .hero-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-text {
+    animation: slideInLeft 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-60px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .hero-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: clamp(48px, 8vw, 72px);
+    font-weight: 900;
+    line-height: 1.1;
+    margin: 0 0 24px 0;
+    background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 50%, #c7d2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-subtitle {
+    font-size: 24px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.9);
+    margin-bottom: 40px;
+    line-height: 1.5;
+  }
+
+  .hero-cta {
+    background: var(--ai-gradient);
+    border: none;
+    padding: 24px 48px;
+    border-radius: 50px;
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    cursor: pointer;
+    box-shadow: var(--shadow-neo), var(--glow);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .hero-cta:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 30px 80px rgba(139, 92, 246, 0.6);
+  }
+
+  .hero-cta::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s;
+  }
+
+  .hero-cta:hover::before {
+    left: 100%;
+  }
+
+  .hero-visual {
+    position: relative;
+    animation: slideInRight 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+  }
+
+  @keyframes slideInRight {
+    from { opacity: 0; transform: translateX(60px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .ai-character {
+    width: 400px;
+    height: 500px;
+    background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(139,92,246,0.2));
+    border-radius: 40px;
+    position: relative;
+    box-shadow: var(--shadow-neo);
+    backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+  }
+
+  .ai-head {
+    width: 220px;
+    height: 240px;
+    background: var(--glass);
+    border-radius: 50% 50% 45% 45% / 60% 60% 40% 40%;
+    position: absolute;
+    top: 60px;
+    left: 90px;
+    box-shadow: inset 0 0 40px rgba(255,255,255,0.1);
+  }
+
+  .ai-eyes {
+    position: absolute;
+    top: 100px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 40px;
+  }
+
+  .ai-eye {
+    width: 32px;
+    height: 32px;
+    background: #1e293b;
+    border-radius: 50%;
+    position: relative;
+    animation: blink 4s infinite;
+  }
+
+  .ai-eye::before {
+    content: '';
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    right: 4px;
+    bottom: 4px;
+    background: white;
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255,255,255,0.8);
+  }
+
+  @keyframes blink {
+    0%, 90%, 100% { height: 32px; }
+    95% { height: 4px; }
+  }
+
+  .ai-chat-bubble {
+    position: absolute;
+    bottom: -60px;
+    right: -20px;
+    background: var(--secondary-gradient);
+    color: white;
+    padding: 20px 28px;
+    border-radius: 24px 24px 8px 24px;
+    font-weight: 600;
+    font-size: 16px;
+    max-width: 280px;
+    box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+  }
+
+  .chat-tail {
+    position: absolute;
+    bottom: -12px;
+    right: 32px;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 12px solid var(--secondary-gradient);
+  }
+
+  .main-section {
+    padding: 120px 40px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .chat-container {
+    backdrop-filter: blur(30px);
+    background: rgba(255,255,255,0.95);
+    border-radius: 32px;
+    box-shadow: var(--shadow-neo);
+    border: 1px solid rgba(255,255,255,0.3);
+    overflow: hidden;
+    height: 600px;
+    position: relative;
+  }
+
+  .chat-header {
+    background: var(--ai-gradient);
+    color: white;
+    padding: 32px;
+    text-align: center;
+  }
+
+  .chat-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 32px;
+    font-weight: 800;
+    margin: 0 0 8px 0;
+  }
+
+  .chat-status {
+    font-size: 16px;
+    opacity: 0.9;
+  }
+
+  .chat-messages {
+    height: 380px;
+    overflow-y: auto;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .message {
+    max-width: 80%;
+    padding: 20px 24px;
+    border-radius: 24px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    animation: messageSlide 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  @keyframes messageSlide {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message-user {
+    background: var(--secondary-gradient);
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 8px;
+  }
+
+  .message-ai {
+    background: rgba(255,255,255,0.8);
+    color: #1e293b;
+    border-bottom-left-radius: 8px;
+  }
+
+  .message-time {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 8px;
+    text-align: right;
+  }
+
+  .chat-input-container {
+    padding: 32px;
+    background: rgba(248, 250, 252, 0.8);
+    border-top: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .chat-input-wrapper {
+    display: flex;
+    gap: 16px;
+    align-items: flex-end;
+  }
+
+  .chat-input {
+    flex: 1;
+    padding: 20px 28px;
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    border-radius: 32px;
+    background: white;
+    font-size: 18px;
+    font-weight: 500;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  }
+
+  .chat-input:focus {
+    border-color: var(--ai-gradient);
+    box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.2), var(--glow);
+    transform: translateY(-2px);
+  }
+
+  .send-btn {
+    width: 68px;
+    height: 68px;
+    border: none;
+    border-radius: 50%;
+    background: var(--ai-gradient);
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: var(--shadow-neo), var(--glow);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  .send-btn:hover {
+    transform: translateY(-6px) scale(1.1);
+    box-shadow: 0 25px 60px rgba(139, 92, 246, 0.6);
+  }
+
+  .typing-indicator {
+    display: none;
+    padding: 20px 24px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 24px;
+    border-bottom-left-radius: 8px;
+    max-width: 70%;
+    opacity: 0.8;
+  }
+
+  .typing-dots {
+    display: inline-flex;
+    gap: 6px;
+    margin-left: 12px;
+  }
+
+  .typing-dot {
+    width: 10px;
+    height: 10px;
+    background: #8b5cf6;
+    border-radius: 50%;
+    animation: typing 1.4s infinite ease-in-out;
+  }
+
+  .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typing {
+    0%, 60%, 100% { transform: translateY(0); }
+    30% { transform: translateY(-12px); }
+  }
+
+  @media (max-width: 768px) {
+    .hero-content {
+      grid-template-columns: 1fr;
+      gap: 60px;
+      text-align: center;
+      padding: 0 20px;
+    }
+    
+    .chat-container {
+      height: 500px;
+      margin: 0 20px;
+    }
+    
+    .main-section {
+      padding: 80px 20px;
+    }
+  }
+</style>
+
+<main>
+  <!-- AI Hero -->
+  <section class="ai-hero">
+    <div class="hero-particles"></div>
+    <div class="hero-content">
+      <div class="hero-text">
+        <h1 class="hero-title">
+          Your Personal AI Farm <span style="background: var(--secondary-gradient);-webkit-background-clip: text;-webkit-text-fill-color: transparent;">Advisor</span>
+        </h1>
+        <p class="hero-subtitle">
+          Get expert farming advice 24/7. Ask about crop diseases, weather strategies, pest management, soil health, and market insights.
+        </p>
+        <button class="hero-cta" onclick="scrollToChat()">
+          <i class="fas fa-sparkles"></i> Start Chatting
+        </button>
+      </div>
+      <div class="hero-visual">
+        <div class="ai-character">
+          <div class="ai-head">
+            <div class="ai-eyes">
+              <div class="ai-eye"></div>
+              <div class="ai-eye"></div>
+            </div>
+          </div>
+          <div class="ai-chat-bubble">
+            "Ready to help your farm thrive! 🌱"
+            <div class="chat-tail"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Chat Interface -->
+  <section class="main-section">
+    <div class="chat-container">
+      <div class="chat-header">
+        <h2 class="chat-title">
+          <i class="fas fa-robot" style="color: #8b5cf6;"></i>
+          AI Farm Advisor
+        </h2>
+        <div class="chat-status" id="advisorStatus">
+          Online • Grok AI powered
+        </div>
+      </div>
+      
+      <div class="chat-messages" id="chatMessages">
+        <div class="message message-ai">
+          <strong>🤖 AI Farm Advisor:</strong> Hello farmer! I'm your 24/7 agriculture expert. 
+          Ask me anything about crops, pests, soil, weather, or farm management. 
+          What challenges are you facing today?
+          <div class="message-time">Just now</div>
+        </div>
+      </div>
+
+      <div class="typing-indicator" id="typingIndicator">
+        AI Farm Advisor is thinking...
+        <div class="typing-dots">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+
+      <div class="chat-input-container">
+        <div class="chat-input-wrapper">
+          <input 
+            type="text" 
+            class="chat-input" 
+            id="chatInput" 
+            placeholder="Ask about crop diseases, fertilizers, weather, pests, or farm management..."
+            autocomplete="off"
+          >
+          <button class="send-btn" id="sendBtn">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const chatMessages = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const sendBtn = document.getElementById('sendBtn');
+  const typingIndicator = document.getElementById('typingIndicator');
+  
+  let conversationHistory = [
+    { role: 'system', content: 'You are a professional AI farm advisor with 25+ years of agriculture experience. Provide practical, actionable advice for Indian farmers. Be concise, specific, and use simple language. Always include 2-3 immediate action steps.' }
+  ];
+
+  function addMessage(content, isUser = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'message-user' : 'message-ai'}`;
+    messageDiv.innerHTML = content.replace(/\n/g, '<br>');
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+    
+    if (isUser) {
+      const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      const timeDiv = document.createElement('div');
+      timeDiv.className = 'message-time';
+      timeDiv.textContent = time;
+      messageDiv.appendChild(timeDiv);
+    }
+  }
+
+  function showTyping() {
+    typingIndicator.style.display = 'block';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  function hideTyping() {
+    typingIndicator.style.display = 'none';
+  }
+
+  async function sendMessage() {
+    const message = chatInput.value.trim();
+    if (!message) return;
+
+    addMessage(message, true);
+    chatInput.value = '';
+    
+
+    showTyping();
+
+    try {
+      // General AI Advisor - ChatGPT style for ALL questions
+      const response = await fetch('/api/agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          question: message,
+          context: 'KrushiMate AI - Answer ALL agriculture/business/weather/crop/market questions like expert ChatGPT. Practical Indian farmer advice.'
+        })
+      });
+      
+      const data = await response.json();
+      hideTyping();
+      addMessage(data.response);
+      
+    } catch (error) {
+      hideTyping();
+      addMessage('Connection issue. Please try again! 🔄', false);
+    }
+
+  }
+
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+
+  chatInput.focus();
+
+  function scrollToChat() {
+    document.querySelector('.chat-container').scrollIntoView({ 
+      behavior: 'smooth' 
+    });
+  }
+
+  // Auto-focus input when Enter pressed
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && document.activeElement !== chatInput) {
+      chatInput.focus();
+    }
+  });
+</script>
+{% endblock %}
+

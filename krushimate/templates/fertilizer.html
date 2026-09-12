@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block content %}
+<!-- Hero Section -->
+<section class="hero card" style="text-align: center;">
+  <h2><i class="fas fa-flask"></i> Fertilizer Calculator</h2>
+  <p class="muted">Calculate perfect NPK dosage for your crops</p>
+</section>
+
+<!-- Calculator Card -->
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+  <h3>NPK Calculator</h3>
+  <form id="fertilizerForm">
+    <div class="row">
+      <label>Crop Type</label>
+      <select id="cropType">
+        <option>Rice</option>
+        <option>Wheat</option>
+        <option>Cotton</option>
+        <option>Sugarcane</option>
+        <option>Tomato</option>
+        <option>Vegetables</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Land Area (acres)</label>
+      <input type="number" id="area" min="0.1" step="0.1" value="1">
+    </div>
+    <div class="row">
+      <label>Soil Type</label>
+      <select id="soilType">
+        <option>Loamy</option>
+        <option>Sandy</option>
+        <option>Clay</option>
+        <option>Alluvial</option>
+      </select>
+    </div>
+    <button class="btn" type="submit" style="width:100%;"><i class="fas fa-calculator"></i> Calculate Dosage</button>
+  </form>
+  
+  <!-- Results -->
+  <div id="results" style="display:none; margin-top:24px;">
+    <h4>Recommended Dosage</h4>
+    <div class="grid">
+      <div class="card stat-card">
+        <div class="stat-icon" style="color: #2196F3;">N</div>
+        <div class="stat-number" id="nitrogen">0</div>
+        <div class="muted">kg/acre</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="color: #4CAF50;">P</div>
+        <div class="stat-number" id="phosphorus">0</div>
+        <div class="muted">kg/acre</div>
+      </div>
+      <div class="card stat-card">
+        <div class="stat-icon" style="color: #FF9800;">K</div>
+        <div class="stat-number" id="potassium">0</div>
+        <div class="muted">kg/acre</div>
+      </div>
+    </div>
+    <div style="margin-top:20px; padding:16px; background: var(--card-glass); border-radius:16px;">
+      <h5>Products to Buy</h5>
+      <div id="productsList"></div>
+      <button class="btn" onclick="addToShoppingList()" style="margin-top:12px;">➕ Add to Market Cart</button>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Tips -->
+<div class="card" style="margin-top:32px;">
+  <h3><i class="fas fa-lightbulb"></i> Quick Fertilizer Tips</h3>
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap:20px;">
+    <div>
+      <h4>Soil Test First</h4>
+      <p class="muted">Always test soil before applying fertilizers</p>
+    </div>
+    <div>
+      <h4>Split Application</h4>
+      <p class="muted">Apply in 2-3 splits for better absorption</p>
+    </div>
+    <div>
+      <h4>Right Timing</h4>
+      <p class="muted">Follow crop growth stage schedule</p>
+    </div>
+  </div>
+</div>
+
+<script>
+// Fertilizer data (NPK requirements kg/acre)
+const fertilizerData = {
+  'Rice': { loamy: [120, 60, 60], sandy: [140, 70, 70], clay: [100, 50, 50], alluvial: [110, 55, 55] },
+  'Wheat': { loamy: [100, 50, 50], sandy: [120, 60, 60], clay: [90, 45, 45], alluvial: [95, 48, 48] },
+  'Cotton': { loamy: [80, 40, 80], sandy: [100, 50, 100], clay: [70, 35, 70], alluvial: [85, 42, 85] },
+  'Sugarcane': { loamy: [250, 100, 100], sandy: [300, 120, 120], clay: [200, 80, 80], alluvial: [240, 95, 95] },
+  'Tomato': { loamy: [150, 100, 150], sandy: [180, 120, 180], clay: [120, 80, 120], alluvial: [140, 90, 140] },
+  'Vegetables': { loamy: [120, 80, 120], sandy: [150, 100, 150], clay: [100, 70, 100], alluvial: [110, 75, 110] }
+};
+
+// Common fertilizer products
+const products = [
+  { name: 'Urea (46% N)', n: 46, type: 'N' },
+  { name: 'DAP (18-46)', n: 18, p: 46, type: 'NP' },
+  { name: 'MOP (60% K)', k: 60, type: 'K' },
+  { name: 'SSP (16% P)', p: 16, type: 'P' }
+];
+
+document.getElementById('fertilizerForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  
+  const crop = document.getElementById('cropType').value;
+  const area = parseFloat(document.getElementById('area').value);
+  const soil = document.getElementById('soilType').value.toLowerCase();
+  
+  const npk = fertilizerData[crop][soil];
+  
+  // Scale for area
+  document.getElementById('nitrogen').textContent = (npk[0] * area).toFixed(1);
+  document.getElementById('phosphorus').textContent = (npk[1] * area).toFixed(1);
+  document.getElementById('potassium').textContent = (npk[2] * area).toFixed(1);
+  
+  // Calculate products needed
+  const productsList = document.getElementById('productsList');
+  let html = '';
+  products.forEach(product => {
+    let qty = 0;
+    if (product.n) qty = (parseFloat(document.getElementById('nitrogen').textContent) / (product.n / 100)) * area;
+    if (product.p) qty = (parseFloat(document.getElementById('phosphorus').textContent) / (product.p / 100)) * area;
+    if (product.k) qty = (parseFloat(document.getElementById('potassium').textContent) / (product.k / 100)) * area;
+    
+    if (qty > 0) {
+      html += `<div><strong>${product.name}:</strong> ${qty.toFixed(1)}kg</div>`;
+    }
+  });
+  productsList.innerHTML = html || 'Use recommended NPK fertilizers';
+  
+  document.getElementById('results').style.display = 'block';
+  
+  // Scroll to results
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth' });
+  showToast('Dosage calculated!', 'success');
+});
+
+function addToShoppingList() {
+  showToast('Added to Market cart!', 'success');
+  // TODO: Integrate with market page cart
+}
+
+</script>
+{% endblock %}

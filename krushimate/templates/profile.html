@@ -1,0 +1,843 @@
+{% extends "base.html" %}
+{% block content %}
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+  :root {
+    --profile-navy: #123047;
+    --profile-deep: #0f2135;
+    --profile-cream: #f8f3e8;
+    --profile-gold: #f59e0b;
+    --profile-green: #1f7a55;
+    --profile-red: #d64545;
+    --profile-sky: #dcf0ff;
+    --profile-card: rgba(255, 255, 255, 0.78);
+    --profile-border: rgba(18, 48, 71, 0.1);
+    --profile-shadow: 0 24px 60px rgba(18, 48, 71, 0.14);
+  }
+
+  .profile-shell {
+    position: relative;
+    overflow: hidden;
+    border-radius: 34px;
+    padding: 28px;
+    background:
+      radial-gradient(circle at top left, rgba(245, 158, 11, 0.18), transparent 30%),
+      radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.12), transparent 26%),
+      linear-gradient(135deg, #fbf8f1 0%, #eef6fb 48%, #f4fbf5 100%);
+    box-shadow: var(--profile-shadow);
+  }
+
+  .profile-shell::before,
+  .profile-shell::after {
+    content: '';
+    position: absolute;
+    border-radius: 999px;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  .profile-shell::before {
+    width: 320px;
+    height: 320px;
+    top: -110px;
+    right: -90px;
+    background: radial-gradient(circle, rgba(18, 48, 71, 0.12), transparent 68%);
+  }
+
+  .profile-shell::after {
+    width: 260px;
+    height: 260px;
+    left: -80px;
+    bottom: -70px;
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.16), transparent 70%);
+  }
+
+  .profile-layout {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 24px;
+  }
+
+  .profile-panel {
+    background: var(--profile-card);
+    backdrop-filter: blur(14px);
+    border: 1px solid var(--profile-border);
+    border-radius: 30px;
+    padding: 28px;
+  }
+
+  .profile-hero {
+    padding: 34px;
+    background:
+      linear-gradient(140deg, rgba(18, 48, 71, 0.96), rgba(31, 122, 85, 0.88)),
+      linear-gradient(120deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+    color: white;
+    box-shadow: 0 28px 70px rgba(18, 48, 71, 0.22);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.14);
+    padding: 10px 16px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .hero-top {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+
+  .avatar-wrap {
+    position: relative;
+    width: 148px;
+    height: 148px;
+    flex: 0 0 auto;
+  }
+
+  .avatar-ring {
+    position: absolute;
+    inset: -7px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.95), rgba(255,255,255,0.88), rgba(96, 165, 250, 0.92));
+    animation: profileSpin 12s linear infinite;
+  }
+
+  @keyframes profileSpin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .profile-avatar {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1d4ed8, #0f766e);
+    border: 5px solid rgba(255,255,255,0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 58px;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.28);
+  }
+
+  .avatar-upload {
+    position: absolute;
+    right: 2px;
+    bottom: 4px;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    border: 4px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 12px 28px rgba(249, 115, 22, 0.35);
+  }
+
+  .hero-copy {
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .profile-title {
+    margin: 0 0 8px 0;
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(34px, 6vw, 54px);
+    line-height: 0.96;
+    letter-spacing: -0.04em;
+  }
+
+  .profile-subtitle {
+    margin: 0 0 18px 0;
+    color: rgba(255,255,255,0.82);
+    font-size: 16px;
+    line-height: 1.7;
+    max-width: 580px;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.12);
+    color: white;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .stats-grid {
+    margin-top: 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .stat-card {
+    border-radius: 24px;
+    padding: 22px;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.14);
+  }
+
+  .stat-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .stat-label {
+    color: rgba(255,255,255,0.74);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.14);
+    font-size: 17px;
+  }
+
+  .stat-value {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(30px, 4vw, 38px);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-note {
+    color: rgba(255,255,255,0.72);
+    font-size: 13px;
+  }
+
+  .profile-side {
+    display: grid;
+    gap: 24px;
+  }
+
+  .insight-panel {
+    background: linear-gradient(135deg, rgba(255,255,255,0.92), rgba(255,255,255,0.74));
+  }
+
+  .panel-title {
+    margin: 0 0 10px 0;
+    color: var(--profile-navy);
+    font-family: 'Sora', sans-serif;
+    font-size: 24px;
+  }
+
+  .panel-subtitle {
+    color: #607287;
+    line-height: 1.7;
+    margin-bottom: 18px;
+  }
+
+  .insight-card {
+    border-radius: 22px;
+    padding: 18px 18px 16px;
+    background: linear-gradient(135deg, #fff9ed, #ffffff);
+    border: 1px solid rgba(245, 158, 11, 0.16);
+    margin-bottom: 14px;
+  }
+
+  .insight-label {
+    color: #9a6a14;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .insight-value {
+    color: var(--profile-navy);
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    margin-bottom: 6px;
+  }
+
+  .insight-copy {
+    color: #627489;
+    line-height: 1.7;
+    font-size: 14px;
+  }
+
+  .action-grid {
+    display: grid;
+    gap: 14px;
+  }
+
+  .profile-btn {
+    border: none;
+    border-radius: 20px;
+    padding: 18px 20px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .profile-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  .btn-edit {
+    color: white;
+    background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+    box-shadow: 0 16px 34px rgba(59, 130, 246, 0.24);
+  }
+
+  .btn-logout {
+    color: white;
+    background: linear-gradient(135deg, #d64545, #ef4444);
+    box-shadow: 0 16px 34px rgba(239, 68, 68, 0.2);
+  }
+
+  .edit-panel {
+    margin-top: 24px;
+    display: none;
+    background: linear-gradient(135deg, rgba(255,255,255,0.96), rgba(245, 249, 255, 0.9));
+  }
+
+  .edit-panel.show {
+    display: block;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group.full {
+    grid-column: 1 / -1;
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #4f657b;
+  }
+
+  .form-input {
+    width: 100%;
+    border: 1px solid #d7e2ea;
+    background: white;
+    border-radius: 16px;
+    padding: 15px 16px;
+    font-size: 15px;
+    color: var(--profile-deep);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+  }
+
+  .save-btn,
+  .secondary-btn {
+    border: none;
+    border-radius: 16px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  .save-btn {
+    background: linear-gradient(135deg, #1f7a55, #22c55e);
+    color: white;
+    box-shadow: 0 16px 32px rgba(34, 197, 94, 0.18);
+  }
+
+  .secondary-btn {
+    background: #eaf2f8;
+    color: #33516d;
+  }
+
+  .toast {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    padding: 16px 18px;
+    border-radius: 16px;
+    color: white;
+    font-weight: 700;
+    z-index: 2200;
+    transform: translateY(-12px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.2);
+  }
+
+  .toast.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toast.success {
+    background: linear-gradient(135deg, #1f7a55, #22c55e);
+  }
+
+  .toast.error {
+    background: linear-gradient(135deg, #d64545, #ef4444);
+  }
+
+  @media (max-width: 1080px) {
+    .profile-layout,
+    .stats-grid,
+    .form-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .profile-shell {
+      padding: 16px;
+      border-radius: 24px;
+    }
+
+    .profile-panel,
+    .profile-hero {
+      padding: 22px;
+      border-radius: 24px;
+    }
+
+    .hero-top {
+      text-align: center;
+      justify-content: center;
+    }
+
+    .hero-copy {
+      min-width: 100%;
+    }
+
+    .hero-meta,
+    .form-actions {
+      justify-content: center;
+    }
+  }
+</style>
+
+<section class="profile-shell">
+  <div class="profile-layout">
+    <div>
+      <section class="profile-panel profile-hero">
+        <div class="hero-badge">
+          <i class="fas fa-id-card"></i>
+          Personal Farm Account
+        </div>
+
+        <div class="hero-top">
+          <div class="avatar-wrap">
+            <div class="avatar-ring"></div>
+            <div class="profile-avatar" id="profileAvatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <input type="file" id="avatarInput" accept="image/*" hidden>
+            <label for="avatarInput" class="avatar-upload" title="Change photo">
+              <i class="fas fa-camera"></i>
+            </label>
+          </div>
+
+          <div class="hero-copy">
+            <h1 class="profile-title" id="profileName">Loading...</h1>
+            <p class="profile-subtitle" id="profileTagline">
+              Your account is the control room for crops, orders, and daily farm work.
+            </p>
+            <div class="hero-meta">
+              <div class="hero-pill" id="profilePhone">
+                <i class="fas fa-phone"></i>
+                Phone Number
+              </div>
+              <div class="hero-pill" id="profileEmailPill">
+                <i class="fas fa-envelope"></i>
+                Email not added
+              </div>
+              <div class="hero-pill" id="profileCityPill">
+                <i class="fas fa-location-dot"></i>
+                City not added
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-label">Crops</div>
+              <div class="stat-icon"><i class="fas fa-seedling"></i></div>
+            </div>
+            <div class="stat-value" id="totalCrops">0</div>
+            <div class="stat-note">Fields currently tracked in your account.</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-label">Orders</div>
+              <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+            </div>
+            <div class="stat-value" id="totalOrders">0</div>
+            <div class="stat-note">Medicine bills and purchases saved for you.</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <div class="stat-label">Acres</div>
+              <div class="stat-icon"><i class="fas fa-ruler-combined"></i></div>
+            </div>
+            <div class="stat-value" id="totalArea">0</div>
+            <div class="stat-note">Total crop area recorded across your farm.</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="profile-panel edit-panel" id="personalForm">
+        <h2 class="panel-title">Edit Personal Information</h2>
+        <p class="panel-subtitle">
+          Keep this account profile updated so every page in the app feels personal and organized.
+        </p>
+
+        <form id="profileForm">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="editName">Full Name</label>
+              <input class="form-input" id="editName" placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="editPhone">Phone Number</label>
+              <input class="form-input" id="editPhone" type="tel" placeholder="Enter your phone number">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="editEmail">Email</label>
+              <input class="form-input" id="editEmail" type="email" placeholder="Enter your email">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="editCity">City</label>
+              <input class="form-input" id="editCity" placeholder="Enter your city">
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="save-btn">
+              <i class="fas fa-save"></i>
+              Save Changes
+            </button>
+            <button type="button" class="secondary-btn" onclick="togglePersonalForm(false)">
+              <i class="fas fa-xmark"></i>
+              Close
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <aside class="profile-side">
+      <section class="profile-panel insight-panel">
+        <h2 class="panel-title">Account Pulse</h2>
+        <p class="panel-subtitle">
+          A quick read on how active this account is right now.
+        </p>
+
+        <div class="insight-card">
+          <div class="insight-label">Current Focus</div>
+          <div class="insight-value" id="focusTitle">Building your farm record</div>
+          <div class="insight-copy" id="focusCopy">
+            Add crops, keep profile details fresh, and use orders to build a reliable season history.
+          </div>
+        </div>
+
+        <div class="insight-card">
+          <div class="insight-label">Identity</div>
+          <div class="insight-value" id="identityValue">Your account is ready</div>
+          <div class="insight-copy" id="identityCopy">
+            This space stays personal to your login, so your information and activity remain organized.
+          </div>
+        </div>
+      </section>
+
+      <section class="profile-panel">
+        <h2 class="panel-title">Quick Actions</h2>
+        <p class="panel-subtitle">
+          Update your details or safely leave the current session.
+        </p>
+
+        <div class="action-grid">
+          <button class="profile-btn btn-edit" onclick="togglePersonalForm()">
+            <span><i class="fas fa-pen-to-square"></i> Personal Info</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+          <button class="profile-btn btn-logout" onclick="handleLogout()">
+            <span><i class="fas fa-right-from-bracket"></i> Logout</span>
+            <i class="fas fa-arrow-right"></i>
+          </button>
+        </div>
+      </section>
+    </aside>
+  </div>
+</section>
+
+<div id="toast" class="toast"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', initProfile);
+
+  async function initProfile() {
+    await loadProfileData();
+    setupEventListeners();
+    await updateLiveStats();
+  }
+
+  function setupEventListeners() {
+    document.getElementById('avatarInput').addEventListener('change', handleAvatarUpload);
+    document.getElementById('profileForm').addEventListener('submit', saveProfile);
+    window.addEventListener('cropsUpdated', updateLiveStats);
+  }
+
+  function getProfilePhotoKey() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    return `profilePhoto_${user.id || user.username || 'guest'}`;
+  }
+
+  async function loadProfileData() {
+    let user = JSON.parse(localStorage.getItem('user') || '{}');
+    try {
+      const response = await fetch('/api/profile');
+      if (response.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+      if (response.ok) {
+        user = await response.json();
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+    } catch (error) {
+      // Keep cached user data if the network request fails.
+    }
+
+    const fullName = [user.first_name, user.last_name].filter(Boolean).join(' ') || user.name || 'Farmer';
+    const phone = user.contact || user.phone || 'Phone Number';
+    const email = user.email || 'Email not added';
+    const city = user.city || 'City not added';
+
+    document.getElementById('profileName').textContent = fullName;
+    document.getElementById('profilePhone').innerHTML = `<i class="fas fa-phone"></i>${phone}`;
+    document.getElementById('profileEmailPill').innerHTML = `<i class="fas fa-envelope"></i>${email}`;
+    document.getElementById('profileCityPill').innerHTML = `<i class="fas fa-location-dot"></i>${city}`;
+    document.getElementById('profileTagline').textContent = `${fullName.split(' ')[0] || 'Farmer'}, this account is your personal space to manage crops, orders, and field progress smoothly.`;
+    document.getElementById('identityValue').textContent = user.username ? `@${user.username}` : 'Your account is ready';
+    document.getElementById('identityCopy').textContent = `Profile details, farm records, and order history are tied to this account${user.created_at ? ` since ${String(user.created_at).slice(0, 10)}` : ''}.`;
+
+    document.getElementById('editName').value = fullName;
+    document.getElementById('editPhone').value = user.contact || user.phone || '';
+    document.getElementById('editEmail').value = user.email || '';
+    document.getElementById('editCity').value = user.city || '';
+
+    const avatar = localStorage.getItem(getProfilePhotoKey()) || localStorage.getItem('profilePhoto');
+    const avatarNode = document.getElementById('profileAvatar');
+    if (avatar) {
+      avatarNode.style.backgroundImage = `url(${avatar})`;
+      avatarNode.innerHTML = '';
+    } else {
+      avatarNode.style.backgroundImage = '';
+      avatarNode.innerHTML = '<i class="fas fa-user"></i>';
+    }
+  }
+
+  function togglePersonalForm(forceState) {
+    const panel = document.getElementById('personalForm');
+    const shouldShow = typeof forceState === 'boolean' ? forceState : !panel.classList.contains('show');
+    panel.classList.toggle('show', shouldShow);
+    if (shouldShow) {
+      panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function handleAvatarUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (loadEvent) => {
+      const avatarNode = document.getElementById('profileAvatar');
+      avatarNode.style.backgroundImage = `url(${loadEvent.target.result})`;
+      avatarNode.innerHTML = '';
+      localStorage.setItem(getProfilePhotoKey(), loadEvent.target.result);
+      showToast('Profile photo updated');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  async function saveProfile(event) {
+    event.preventDefault();
+
+    const existingUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const nameParts = document.getElementById('editName').value.trim().split(/\s+/).filter(Boolean);
+    const profileData = {
+      ...existingUser,
+      first_name: nameParts.shift() || existingUser.first_name || 'Farmer',
+      last_name: nameParts.join(' ') || existingUser.last_name || '',
+      contact: document.getElementById('editPhone').value.trim(),
+      phone: document.getElementById('editPhone').value.trim(),
+      email: document.getElementById('editEmail').value.trim(),
+      city: document.getElementById('editCity').value.trim() || existingUser.city || 'Unknown'
+    };
+
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          first_name: profileData.first_name,
+          last_name: profileData.last_name,
+          city: profileData.city,
+          contact: profileData.contact,
+          email: profileData.email
+        })
+      });
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to save profile');
+      }
+
+      localStorage.setItem('user', JSON.stringify(profileData));
+      await loadProfileData();
+      togglePersonalForm(false);
+      showToast('Profile saved successfully');
+    } catch (error) {
+      showToast(error.message || 'Failed to save profile', 'error');
+    }
+  }
+
+  function handleLogout() {
+    if (!confirm('Logout and clear this session?')) return;
+
+    localStorage.removeItem('user');
+    localStorage.removeItem(getProfilePhotoKey());
+    fetch('/logout', { credentials: 'same-origin' }).finally(() => {
+      window.location.href = '/login';
+    });
+  }
+
+  async function updateLiveStats() {
+    try {
+      const [cropsResponse, ordersResponse] = await Promise.all([
+        fetch('/api/user_crops'),
+        fetch('/api/user_medicine_orders')
+      ]);
+
+      let crops = [];
+      let orders = [];
+
+      if (cropsResponse.status === 401 || ordersResponse.status === 401) {
+        window.location.href = '/login';
+        return;
+      }
+
+      if (cropsResponse.ok) {
+        crops = await cropsResponse.json();
+      }
+
+      if (ordersResponse.ok) {
+        orders = await ordersResponse.json();
+      }
+
+      const cropCount = Array.isArray(crops) ? crops.length : 0;
+      const orderCount = Array.isArray(orders) ? orders.length : 0;
+      const totalArea = Array.isArray(crops)
+        ? crops.reduce((sum, crop) => sum + Number(crop.area || 0), 0)
+        : 0;
+
+      document.getElementById('totalCrops').textContent = String(cropCount);
+      document.getElementById('totalOrders').textContent = String(orderCount);
+      document.getElementById('totalArea').textContent = totalArea.toFixed(totalArea % 1 === 0 ? 0 : 1);
+
+      const focusTitle = document.getElementById('focusTitle');
+      const focusCopy = document.getElementById('focusCopy');
+
+      if (cropCount === 0 && orderCount === 0) {
+        focusTitle.textContent = 'Start your farm record';
+        focusCopy.textContent = 'Your account is fresh. Add your first crop and place your first order to build useful history.';
+      } else if (cropCount > 0 && orderCount === 0) {
+        focusTitle.textContent = `${cropCount} crop${cropCount === 1 ? '' : 's'} under watch`;
+        focusCopy.textContent = 'Your crop records are active. The next strong move is managing supplies and order history inside the app.';
+      } else {
+        focusTitle.textContent = 'Account running smoothly';
+        focusCopy.textContent = `You are tracking ${cropCount} crop record${cropCount === 1 ? '' : 's'} and ${orderCount} order${orderCount === 1 ? '' : 's'} from one account dashboard.`;
+      }
+    } catch (error) {
+      document.getElementById('totalCrops').textContent = '0';
+      document.getElementById('totalOrders').textContent = '0';
+      document.getElementById('totalArea').textContent = '0';
+    }
+  }
+
+  function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = `toast ${type} show`;
+    setTimeout(() => toast.classList.remove('show'), 3200);
+  }
+</script>
+
+{% endblock %}
